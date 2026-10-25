@@ -72,13 +72,23 @@ def test_starter_boards(db):
 def test_board_slugs_unique_per_owner(call, people):
     owner, editor = people[0], people[1]
     first = call("board_create", owner, title="My tasks").data
-    second = call("board_create", owner, title="My tasks").data
+    second = call("board_create", owner, title="My tasks?").data
     third = call("board_create", owner, title="My Tasks!").data
     assert (first["url"], second["url"], third["url"]) == ("/leon/my-tasks/", "/leon/my-tasks-1/", "/leon/my-tasks-2/")
     assert call("board_create", editor, title="My tasks").data["url"] == "/mara-lind/my-tasks/"
     assert call("board_update", owner, board_id=first["id"], title="My tasks").data["url"] == "/leon/my-tasks/"
     assert call("board_update", owner, board_id=second["id"], title="Groceries").data["url"] == "/leon/groceries/"
     assert call("board_create", owner, title="🌼").data["url"] == "/leon/board/"
+
+
+def test_board_titles_unique_per_owner(call, people, board):
+    owner, editor = people[0], people[1]
+    other = s.create_board(owner, "Garden")
+    refused(call("board_create", owner, title="Household"), 409)
+    refused(call("board_create", owner, title=" household "), 409)
+    refused(call("board_update", owner, board_id=other.id, title="HOUSEHOLD"), 409)
+    assert call("board_update", owner, board_id=board.id, title="household").data["title"] == "household"
+    assert call("board_create", editor, title="Household").ok
 
 
 def test_usernames_unique_and_not_reserved(db):

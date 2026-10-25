@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}{% if archive %}Archive · {% endif %}{{ board.title }} · Vergissmeinnicht{% endblock %}
 {% block content %}
-<div x-data="boardPage({{ archive|yesno:'true,false' }})">
+<div class="vm-board-page" x-data="boardPage({{ archive|yesno:'true,false' }})">
   <div class="vm-page-title">
     {% include "partials/_emoji_picker.html" with get="() => board.emoji" set="e => updateBoard({ emoji: e })" editable="isOwner && !archive" %}
     <h1>{% include "partials/_inline_edit.html" with get="() => board.title" set="v => updateBoard({ title: v })" label="board title" editable="isOwner && !archive" %}</h1>

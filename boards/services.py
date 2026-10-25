@@ -232,11 +232,17 @@ def create_starter_boards(user):
         create_board(user, title, emoji)
 
 
+def _require_unique_board_title(owner, title, exclude=None):
+    if Board.objects.filter(owner=owner, title__iexact=title).exclude(pk=exclude).exists():
+        raise Conflict(f"Board {title} already exists")
+
+
 @transaction.atomic
 def create_board(user, title, emoji="", position=None):
     title = clean_text(title, "Board title", 100)
     emoji = clean_emoji(emoji)
     siblings = list(Board.objects.select_for_update().filter(owner=user).order_by("position", "id"))
+    _require_unique_board_title(user, title)
     board = Board.objects.create(owner=user, title=title, emoji=emoji, slug=board_slug(user, title))
     List.objects.create(board=board, is_default=True, position=0)
     _place(siblings, board, position)
@@ -248,6 +254,7 @@ def update_board(user, board_id, title=UNSET, emoji=UNSET):
     board = get_board(user, board_id, OWNER_ONLY)
     if title is not UNSET:
         board.title = clean_text(title, "Board title", 100)
+        _require_unique_board_title(board.owner, board.title, exclude=board.pk)
         board.slug = board_slug(board.owner, board.title, board)
     if emoji is not UNSET:
         board.emoji = clean_emoji(emoji)
@@ -337,6 +344,7 @@ def create_list(user, board_id, title, position=None):
     board = get_board(user, board_id, WRITE)
     title = clean_text(title, "List title", 100)
     siblings = list(board.lists.select_for_update().order_by("position", "id"))
+    _require_unique_list_title(board, title)
     lst = List.objects.create(board=board, title=title, position=len(siblings))
     _place(siblings, lst, position, minimum=1)
     return lst
@@ -349,9 +357,15 @@ def _custom_list(user, list_id):
     return lst
 
 
+def _require_unique_list_title(board, title, exclude=None):
+    if board.lists.filter(title__iexact=title).exclude(pk=exclude).exists():
+        raise Conflict(f"List {title} already exists on this board")
+
+
 def rename_list(user, list_id, title):
     lst = _custom_list(user, list_id)
     lst.title = clean_text(title, "List title", 100)
+    _require_unique_list_title(lst.board, lst.title, exclude=lst.pk)
     lst.save(update_fields=["title"])
     return lst
 

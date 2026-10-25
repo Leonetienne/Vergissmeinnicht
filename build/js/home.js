@@ -31,9 +31,15 @@ Alpine.data("boardList", () => {
       }
     },
 
+    titleTaken(title, except) {
+      const wanted = title.toLowerCase();
+      const taken = this.own.some((b) => b !== except && b.title.toLowerCase() === wanted);
+      if (taken) window.toast(`Board ${title} already exists`);
+      return taken;
+    },
     create(input) {
       const title = input.value.trim();
-      if (!title) return;
+      if (!title || this.titleTaken(title)) return;
       input.value = "";
       let board = { id: newTempId("board"), title, emoji: "", url: "#", role: "owner" };
       this.perform(
@@ -62,6 +68,7 @@ Alpine.data("boardList", () => {
       );
     },
     rename(board, title) {
+      if (this.titleTaken(title, board)) return;
       this.update(board, { title }, "rename board");
     },
     setEmoji(board, emoji) {

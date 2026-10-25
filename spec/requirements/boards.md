@@ -67,6 +67,14 @@ The system shall require a board title of 1 to 100 characters.
 Covers:
 - `feat~boards~1`
 
+### Unique board title
+`req~boards.name-unique~1`
+
+If a request creates or renames a board with a title that another board of the same owner already has, ignoring case, then the system shall reject it and the page shall show a toast naming the taken title; boards of other owners, including boards shared with the user, shall not count.
+
+Covers:
+- `feat~boards~1`
+
 ### Inline rename
 `req~boards.rename~1`
 

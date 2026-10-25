@@ -34,9 +34,9 @@ Covers:
 ## Layout
 
 ### Horizontal columns
-`req~lists.layout~1`
+`req~lists.layout~2`
 
-On screens wider than 768 px, the board page shall show the lists side by side as columns, scrolling horizontally when they exceed the width.
+On screens wider than 768 px, the board page shall show the lists side by side as columns, scrolling horizontally when they exceed the width; the columns shall reach at least down to the bottom of the viewport, keeping the page margins, the board export link and the footer visible.
 
 Covers:
 - `feat~lists~1`
@@ -67,6 +67,14 @@ Covers:
 `req~lists.name~1`
 
 The system shall require a list title of 1 to 100 characters.
+
+Covers:
+- `feat~lists~1`
+
+### Unique list title
+`req~lists.name-unique~1`
+
+If a request creates or renames a list with a title that another list of the same board already has, ignoring case, then the system shall reject it and the board page shall show a toast naming the taken title.
 
 Covers:
 - `feat~lists~1`

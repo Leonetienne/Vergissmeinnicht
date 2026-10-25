@@ -169,3 +169,50 @@ def test_layout_titles_lists_and_share_row(ui):
     ui.go("/")
     entry = ui.xpath("//div[contains(@class,'vm-board-entry')][.//*[normalize-space()='My tasks']]")
     assert ui.css(".vm-board-entry__name", entry).size["height"] <= 22
+
+
+def test_duplicate_list_title_rejected(ui, owner):
+    ui.create_board("Dupes")
+    for name in ["Groceries", "Later"]:
+        ui.click(ui.xpath("//button[contains(normalize-space(), 'Create')][contains(normalize-space(), 'list')]"))
+        ui.type(ui.d.switch_to.active_element, name + Keys.ENTER)
+    ui.click(ui.button("+ Create another list"))
+    ui.type(ui.d.switch_to.active_element, "groceries" + Keys.ENTER)
+    assert "List groceries already exists on this board" in ui.toast()
+    ui.keys(Keys.ESCAPE)
+    titles = lambda: [h.text for h in ui.all(".vm-list__header")]
+    assert titles() == ["Groceries", "Later"]
+
+    ui.click(ui.css(".vm-inline", ui.list_section("Later")))
+    field = ui.d.switch_to.active_element
+    field.send_keys(Keys.CONTROL, "a")
+    ui.type(field, "Groceries" + Keys.ENTER)
+    assert titles() == ["Groceries", "Later"]
+    ui.go(ui.d.current_url.replace(BASE, ""))
+    assert titles() == ["Groceries", "Later"]
+
+
+def test_lists_reach_viewport_bottom(ui, owner):
+    ui.create_board("Tall")
+    ui.click(ui.button("+ Create list"))
+    ui.type(ui.d.switch_to.active_element, "Short" + Keys.ENTER)
+    bottom = ui.d.execute_script("return document.querySelector('.vm-list--custom').getBoundingClientRect().bottom")
+    footer = ui.d.execute_script("return document.querySelector('.vm-footer').getBoundingClientRect().top")
+    height = ui.d.execute_script("return window.innerHeight")
+    assert footer - 120 < bottom < footer and footer <= height
+
+
+def test_duplicate_board_title_rejected(ui, owner):
+    ui.go("/")
+    entry = ui.css("input[aria-label='New board']")
+    ui.type(entry, "shopping list" + Keys.ENTER)
+    assert "Board shopping list already exists" in ui.toast()
+    names = lambda: [a.text for a in ui.all(".vm-board-entry__name")]
+    assert names() == ["My Todos", "Shopping List"]
+
+    ui.click(ui.all(".vm-board-entry__name .vm-inline")[0])
+    field = ui.d.switch_to.active_element
+    field.send_keys(Keys.CONTROL, "a")
+    ui.type(field, "Shopping List" + Keys.ENTER)
+    ui.go("/")
+    assert names() == ["My Todos", "Shopping List"]

@@ -32,6 +32,18 @@ def test_rename_list(call, people, board, default_list):
     refused(call("list_update", owner, list_id=default_list.id, title="C"), 400)
 
 
+def test_list_titles_unique_per_board(call, people, board):
+    owner = people[0]
+    a = s.create_list(owner, board.id, "Groceries")
+    b = s.create_list(owner, board.id, "Later")
+    refused(call("list_create", owner, board_id=board.id, title="Groceries"), 409)
+    refused(call("list_create", owner, board_id=board.id, title=" groceries "), 409)
+    refused(call("list_update", owner, list_id=b.id, title="GROCERIES"), 409)
+    assert call("list_update", owner, list_id=a.id, title="groceries").data["title"] == "groceries"
+    other = s.create_board(owner, "Other")
+    assert call("list_create", owner, board_id=other.id, title="Groceries").ok
+
+
 def test_move_list(call, people, board, default_list):
     owner = people[0]
     a, b, c = (s.create_list(owner, board.id, n) for n in "ABC")

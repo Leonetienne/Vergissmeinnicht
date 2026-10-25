@@ -46,6 +46,12 @@ button { font-family: inherit; }
 .vm-board-tools { margin-bottom: var(--space-3); display: flex; gap: var(--space-2); align-items: center; }
 .vm-board-tools .vm-input { width: var(--list-width); max-width: 100%; }
 .vm-board { padding-bottom: var(--space-2); }
+// Board fills the space between header and footer, so columns reach the viewport bottom.
+.vm-main:has(> .vm-board-page) { display: flex; flex-direction: column; }
+.vm-board-page { flex: 1; display: flex; flex-direction: column; }
+@media (min-width: 769px) {
+  .vm-board { flex: 1; }
+}
 .vm-list__cards { display: flex; flex-direction: column; gap: var(--space-2); min-height: 8px; }
 // Columns share the height of the longest list, so the card area of a short list stays a drop target.
 @media (min-width: 769px) {

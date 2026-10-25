@@ -174,8 +174,15 @@ Alpine.data("boardPage", (archive = false) => ({
     this.newListTitle = "";
     setTimeout(() => this.$refs.newList.focus());
   },
+  listTitleTaken(title, except) {
+    const wanted = title.toLowerCase();
+    const taken = this.board.lists.some((l) => l !== except && l.title.toLowerCase() === wanted);
+    if (taken) window.toast(`List ${title} already exists on this board`);
+    return taken;
+  },
   createList() {
     const title = this.newListTitle.trim();
+    if (title && this.listTitleTaken(title)) return;
     this.creatingList = false;
     if (!title) return;
     let list = { id: newTempId("list"), board_id: this.board.id, title, is_default: false,
@@ -197,6 +204,7 @@ Alpine.data("boardPage", (archive = false) => ({
     );
   },
   renameList(list, title) {
+    if (this.listTitleTaken(title, list)) return;
     const old = list.title;
     this.perform(
       () => (list.title = title),
