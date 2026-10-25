@@ -106,9 +106,9 @@ Covers:
 - `feat~lists~1`
 
 ### List export link
-`req~lists.export-link~1`
+`req~lists.export-link~2`
 
-Every list, including the default list, shall end with a "Json export" link at its bottom right.
+While a list, including the default list, shows a task, it shall end with a "Json export" link at its bottom right.
 
 Covers:
 - `feat~lists~1`

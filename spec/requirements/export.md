@@ -1,9 +1,9 @@
 # JSON Export
 
 ### Board export
-`req~export.board~2`
+`req~export.board~3`
 
-At the bottom left of every board page, the system shall show a "Json export" link that downloads the board with all lists and tasks of every state as a JSON file.
+While any list on a board page shows a task, the system shall show at the bottom left of the page a "Json export" link that downloads the board with all lists and tasks of every state as a JSON file.
 
 Covers:
 - `feat~export~1`
