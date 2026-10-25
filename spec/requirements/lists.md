@@ -63,10 +63,10 @@ Above the lists, the system shall show a small button "Create list", or "Create 
 Covers:
 - `feat~lists~1`
 
-### List name
+### List title
 `req~lists.name~1`
 
-The system shall require a list name of 1 to 100 characters.
+The system shall require a list title of 1 to 100 characters.
 
 Covers:
 - `feat~lists~1`

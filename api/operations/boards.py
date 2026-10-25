@@ -3,7 +3,7 @@ from boards.serializers import board_data, board_with_lists
 
 from ..registry import ID, POSITION, READ, WRITE, operation
 
-NAME = {"type": "string", "description": "1 to 100 characters"}
+TITLE = {"type": "string", "description": "1 to 100 characters"}
 EMOJI = {"type": "string", "description": "One emoji, or empty to remove it"}
 
 
@@ -23,14 +23,14 @@ def board_get(user, board_id):
 
 @operation("board_create", access=WRITE, method="POST", path="boards/",
            description="Create a board with its default list. Owner is the caller.",
-           params={"name": NAME, "emoji": EMOJI, "position": POSITION}, required=["name"])
+           params={"title": TITLE, "emoji": EMOJI, "position": POSITION}, required=["title"])
 def board_create(user, **args):
     return board_data(s.create_board(user, **args))
 
 
 @operation("board_update", access=WRITE, method="PATCH", path="boards/{board_id}/",
            description="Rename a board or change its emoji. Owner only.",
-           params={"board_id": ID, "name": NAME, "emoji": EMOJI}, required=["board_id"])
+           params={"board_id": ID, "title": TITLE, "emoji": EMOJI}, required=["board_id"])
 def board_update(user, board_id, **args):
     return board_data(s.update_board(user, board_id, **args))
 

@@ -40,7 +40,7 @@ Alpine.data("searchPopup", () => ({
       return;
     }
     if (q !== this.query.trim()) return;
-    const where = (b) => (b.emoji ? b.emoji + " " : "") + b.name;
+    const where = (b) => (b.emoji ? b.emoji + " " : "") + b.title;
     this.results = [
       ...data.boards.map((b) => ({ key: "b" + b.id, label: where(b), where: "Board", tag: "", url: b.url })),
       ...data.tasks.map((t) => ({

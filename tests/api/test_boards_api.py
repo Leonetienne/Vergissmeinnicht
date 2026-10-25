@@ -7,15 +7,15 @@ from .conftest import make_user, refused
 
 def test_create_board_with_default_list(call, people):
     owner = people[0]
-    result = call("board_create", owner, name="Garden", emoji="🌼")
-    assert result.ok and result.data["name"] == "Garden" and result.data["role"] == "owner"
+    result = call("board_create", owner, title="Garden", emoji="🌼")
+    assert result.ok and result.data["title"] == "Garden" and result.data["role"] == "owner"
     board = Board.objects.get(pk=result.data["id"])
     assert list(board.lists.values_list("is_default", "title")) == [(True, "")]
 
 
 def test_create_board_validation(call, people):
-    refused(call("board_create", people[0], name="  "), 400)
-    refused(call("board_create", people[0], name="x" * 101), 400)
+    refused(call("board_create", people[0], title="  "), 400)
+    refused(call("board_create", people[0], title="x" * 101), 400)
     refused(call("board_create", people[0]), 400)
 
 
@@ -23,8 +23,8 @@ def test_boards_list_sections(call, people, board):
     owner, editor, observer, _ = people
     s.create_board(editor, "Zeta")
     data = call("boards_list", editor).data
-    assert [b["name"] for b in data["own"]] == ["Zeta"]
-    assert data["shared"][0]["name"] == "Household"
+    assert [b["title"] for b in data["own"]] == ["Zeta"]
+    assert data["shared"][0]["title"] == "Household"
     assert data["shared"][0]["role"] == "editor"
     assert data["shared"][0]["owner"]["display_name"] == "Leon"
 
@@ -34,7 +34,7 @@ def test_shared_sorted_alphabetically(call, people):
     for name in ["beta", "Alpha", "gamma"]:
         b = s.create_board(owner, name)
         s.add_share(owner, b.id, editor.id)
-    assert [b["name"] for b in call("boards_list", editor).data["shared"]] == ["Alpha", "beta", "gamma"]
+    assert [b["title"] for b in call("boards_list", editor).data["shared"]] == ["Alpha", "beta", "gamma"]
 
 
 def test_board_get_includes_every_state(call, people, board, default_list):
@@ -54,31 +54,31 @@ def test_board_get_hidden_from_strangers(call, people, board):
 
 def test_update_board_owner_only(call, people, board):
     owner, editor, observer, stranger = people
-    assert call("board_update", owner, board_id=board.id, name="Home", emoji="🏡").data["url"] == "/leon/home/"
-    refused(call("board_update", editor, board_id=board.id, name="X"), 403)
+    assert call("board_update", owner, board_id=board.id, title="Home", emoji="🏡").data["url"] == "/leon/home/"
+    refused(call("board_update", editor, board_id=board.id, title="X"), 403)
     refused(call("board_update", observer, board_id=board.id, emoji="🌼"), 403)
-    refused(call("board_update", stranger, board_id=board.id, name="X"), 404)
+    refused(call("board_update", stranger, board_id=board.id, title="X"), 404)
     refused(call("board_update", owner, board_id=board.id, emoji="abc"), 400)
-    assert Board.objects.get(pk=board.id).name == "Home"
+    assert Board.objects.get(pk=board.id).title == "Home"
 
 
 def test_starter_boards(db):
     user = User.objects.create_user("new@example.org", "pw1", display_name="New")
-    assert list(Board.objects.filter(owner=user).values_list("name", "emoji", "slug")) == [
+    assert list(Board.objects.filter(owner=user).values_list("title", "emoji", "slug")) == [
         ("My Todos", "🧹", "my-todos"), ("Shopping List", "🛒", "shopping-list")]
     assert all(b.lists.filter(is_default=True).count() == 1 for b in Board.objects.filter(owner=user))
 
 
 def test_board_slugs_unique_per_owner(call, people):
     owner, editor = people[0], people[1]
-    first = call("board_create", owner, name="My tasks").data
-    second = call("board_create", owner, name="My tasks").data
-    third = call("board_create", owner, name="My Tasks!").data
+    first = call("board_create", owner, title="My tasks").data
+    second = call("board_create", owner, title="My tasks").data
+    third = call("board_create", owner, title="My Tasks!").data
     assert (first["url"], second["url"], third["url"]) == ("/leon/my-tasks/", "/leon/my-tasks-1/", "/leon/my-tasks-2/")
-    assert call("board_create", editor, name="My tasks").data["url"] == "/mara-lind/my-tasks/"
-    assert call("board_update", owner, board_id=first["id"], name="My tasks").data["url"] == "/leon/my-tasks/"
-    assert call("board_update", owner, board_id=second["id"], name="Groceries").data["url"] == "/leon/groceries/"
-    assert call("board_create", owner, name="🌼").data["url"] == "/leon/board/"
+    assert call("board_create", editor, title="My tasks").data["url"] == "/mara-lind/my-tasks/"
+    assert call("board_update", owner, board_id=first["id"], title="My tasks").data["url"] == "/leon/my-tasks/"
+    assert call("board_update", owner, board_id=second["id"], title="Groceries").data["url"] == "/leon/groceries/"
+    assert call("board_create", owner, title="🌼").data["url"] == "/leon/board/"
 
 
 def test_usernames_unique_and_not_reserved(db):

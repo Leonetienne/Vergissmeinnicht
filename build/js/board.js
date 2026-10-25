@@ -108,7 +108,7 @@ Alpine.data("boardPage", (archive = false) => ({
   // Board
   updateBoard(fields) {
     const old = Object.fromEntries(Object.keys(fields).map((k) => [k, this.board[k]]));
-    const label = "name" in fields ? "rename board" : "change emoji";
+    const label = "title" in fields ? "rename board" : "change emoji";
     const follow = (result) => {
       if (!result) return;
       this.board.url = result.url;
@@ -122,7 +122,7 @@ Alpine.data("boardPage", (archive = false) => ({
     );
   },
   async deleteBoard() {
-    if (!(await window.confirmDialog(`Delete board ${this.board.name} with all its lists and tasks?`))) return;
+    if (!(await window.confirmDialog(`Delete board ${this.board.title} with all its lists and tasks?`))) return;
     try {
       await this.run(() => op("board_delete", { board_id: this.board.id }));
       location.href = "/";
@@ -131,7 +131,7 @@ Alpine.data("boardPage", (archive = false) => ({
     }
   },
   async leaveBoard() {
-    if (!(await window.confirmDialog(`Leave board ${this.board.name}? Your access ends.`))) return;
+    if (!(await window.confirmDialog(`Leave board ${this.board.title}? Your access ends.`))) return;
     try {
       await this.run(() => op("board_leave", { board_id: this.board.id }));
       location.href = "/";

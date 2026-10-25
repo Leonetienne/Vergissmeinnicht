@@ -54,7 +54,7 @@ def message_for(user, items):
         board = task.list.board
         when = "due" if stage == DUE else "due soon"
         link = f"{settings.SITE_URL}{board.get_absolute_url()}#task-{task.id}"
-        lines.append(f"- {task.title} ({board.name}, {when} {task.due_date:%b %-d, %Y})\n  {link}")
+        lines.append(f"- {task.title} ({board.title}, {when} {task.due_date:%b %-d, %Y})\n  {link}")
     count = len(items)
     subject = f"{count} task{'s' if count != 1 else ''} due"
     body = f"Hello {user.display_name},\n\nthese tasks are due:\n\n" + "\n".join(lines) + "\n"

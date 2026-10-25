@@ -62,14 +62,14 @@ def test_session_reads_and_csrf_writes(people):
     browser = Client(enforce_csrf_checks=True)
     browser.force_login(people[0])
     assert browser.get("/api/v1/boards/").status_code == 200
-    assert browser.post("/api/v1/boards/", json.dumps({"name": "A"}), content_type="application/json").status_code == 401
+    assert browser.post("/api/v1/boards/", json.dumps({"title": "A"}), content_type="application/json").status_code == 401
     browser.get("/")
     token = browser.cookies["csrftoken"].value
-    response = browser.post("/api/v1/boards/", json.dumps({"name": "A"}), content_type="application/json", HTTP_X_CSRFTOKEN=token)
+    response = browser.post("/api/v1/boards/", json.dumps({"title": "A"}), content_type="application/json", HTTP_X_CSRFTOKEN=token)
     assert response.status_code == 200
 
 
-@pytest.mark.parametrize("body", ["not json", "[1]", '{"name": 5}', '{"name": "A", "bogus": 1}'])
+@pytest.mark.parametrize("body", ["not json", "[1]", '{"title": 5}', '{"title": "A", "bogus": 1}'])
 def test_malformed_bodies_are_400(client, people, body):
     key = Key.generate(people[0], Key.API)
     response = client.post("/api/v1/boards/", body, content_type="application/json", HTTP_AUTHORIZATION=f"Bearer {key}")

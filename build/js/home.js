@@ -32,21 +32,21 @@ Alpine.data("boardList", () => {
     },
 
     create(input) {
-      const name = input.value.trim();
-      if (!name) return;
+      const title = input.value.trim();
+      if (!title) return;
       input.value = "";
-      let board = { id: newTempId("board"), name, emoji: "", url: "#", role: "owner" };
+      let board = { id: newTempId("board"), title, emoji: "", url: "#", role: "owner" };
       this.perform(
         () => {
           this.own.push(board);
           board = this.own[this.own.length - 1];
         },
-        () => op("board_create", { name }),
+        () => op("board_create", { title }),
         (created) => {
           Object.assign(board, created);
           return ["create board", () => op("board_delete", { board_id: rid("board", created.id) }), async () => {
             const previous = rid("board", created.id);
-            const again = await op("board_create", { name, position: this.own.indexOf(board) });
+            const again = await op("board_create", { title, position: this.own.indexOf(board) });
             remap("board", previous, again.id);
           }];
         },
@@ -61,8 +61,8 @@ Alpine.data("boardList", () => {
           () => op("board_update", { board_id: rid("board", board.id), ...fields })],
       );
     },
-    rename(board, name) {
-      this.update(board, { name }, "rename board");
+    rename(board, title) {
+      this.update(board, { title }, "rename board");
     },
     setEmoji(board, emoji) {
       this.update(board, { emoji }, "change emoji");

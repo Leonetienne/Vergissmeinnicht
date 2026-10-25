@@ -242,7 +242,7 @@ class TestSettings:
         response = client.post("/settings/", {"action": "delete_account"})
         assert response["Location"] == "/login"
         assert not User.objects.filter(pk=owner.pk).exists()
-        assert list(Board.objects.values_list("name", flat=True)) == ["Mara board"]
+        assert list(Board.objects.values_list("title", flat=True)) == ["Mara board"]
         assert not own.shares.exists()
 
 
@@ -250,7 +250,7 @@ class TestBoardPages:
     def test_home_sections(self, client, people, board):
         client.force_login(people[1])
         data = client.get("/").context["page_data"]
-        assert data["shared"][0]["name"] == "Household"
+        assert data["shared"][0]["title"] == "Household"
 
     def test_board_url_by_owner_and_slug(self, client, people, board):
         client.force_login(people[2])

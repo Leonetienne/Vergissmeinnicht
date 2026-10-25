@@ -6,7 +6,7 @@ from ..registry import READ, WRITE, operation
 
 
 @operation("search", access=READ, method="GET", path="search/",
-           description="Find boards by name and tasks by title or note (at least 2 characters), boards first, up to 50.",
+           description="Find boards and tasks by title, tasks also by note (at least 2 characters), boards first, up to 50.",
            params={"q": {"type": "string"}}, required=["q"])
 def search(user, q):
     boards, tasks = s.search(user, q)

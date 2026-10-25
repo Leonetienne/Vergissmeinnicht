@@ -23,7 +23,7 @@ Tags: UI
 ### Board list entry
 `req~boards.list.entry~3`
 
-Each board list entry shall be one card that opens the board page when clicked anywhere, except on the emoji field, which opens the emoji picker for the owner, and the board name, which starts inline editing for the owner.
+Each board list entry shall be one card that opens the board page when clicked anywhere, except on the emoji field, which opens the emoji picker for the owner, and the board title, which starts inline editing for the owner.
 
 Covers:
 - `feat~boards~1`
@@ -43,7 +43,7 @@ Covers:
 ### Inline creation
 `req~boards.create~1`
 
-When a user types a name into the input at the end of their own boards and presses Enter, the system shall create the board with an empty default list, show it in the list with an empty emoji placeholder, and clear the input for the next name.
+When a user types a title into the input at the end of their own boards and presses Enter, the system shall create the board with an empty default list, show it in the list with an empty emoji placeholder, and clear the input for the next title.
 
 Covers:
 - `feat~boards~1`
@@ -59,10 +59,10 @@ Shows new users what boards are for.
 Covers:
 - `feat~boards~1`
 
-### Board name
+### Board title
 `req~boards.name~1`
 
-The system shall require a board name of 1 to 100 characters.
+The system shall require a board title of 1 to 100 characters.
 
 Covers:
 - `feat~boards~1`
@@ -70,7 +70,7 @@ Covers:
 ### Inline rename
 `req~boards.rename~1`
 
-When the owner edits a board name inline, in the board list or in the board page title, the system shall store the new name.
+When the owner edits a board title inline, in the board list or in the board page title, the system shall store the new title.
 
 Covers:
 - `feat~boards~1`
@@ -98,7 +98,7 @@ Tags: Security
 ### Emoji placeholder
 `req~boards.emoji.placeholder~1`
 
-While a board has no emoji, the system shall show an empty placeholder field left of its name.
+While a board has no emoji, the system shall show an empty placeholder field left of its title.
 
 Covers:
 - `feat~boards~1`
@@ -136,7 +136,7 @@ Covers:
 ### Board URL
 `req~boards.page.url~2`
 
-The system shall serve each board at `/<username>/<slug>/` with the owner's username and a slug derived from the board name, unique among the owner's boards by appending -1, -2 and so on; when the board is renamed, the slug shall follow the new name.
+The system shall serve each board at `/<username>/<slug>/` with the owner's username and a slug derived from the board title, unique among the owner's boards by appending -1, -2 and so on; when the board is renamed, the slug shall follow the new title.
 
 Covers:
 - `feat~boards~1`
@@ -157,7 +157,7 @@ Tags: Security
 ### Board page header
 `req~boards.page.header~1`
 
-The board page shall show emoji and name as title, followed by the buttons "Archive what's done" and "Open archive", and for the owner a "Share" control.
+The board page shall show emoji and title as heading, followed by the buttons "Archive what's done" and "Open archive", and for the owner a "Share" control.
 
 Covers:
 - `feat~boards~1`

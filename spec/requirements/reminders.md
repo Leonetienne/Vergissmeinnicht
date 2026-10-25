@@ -57,7 +57,7 @@ Tags: Privacy
 ### One mail per run
 `req~reminders.digest~1`
 
-The system shall send each recipient at most one email per run, listing all their due tasks with board name, due date and a link to the task anchor.
+The system shall send each recipient at most one email per run, listing all their due tasks with board title, due date and a link to the task anchor.
 
 Covers:
 - `feat~reminders~1`

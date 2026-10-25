@@ -13,7 +13,7 @@ Tags: UI
 ### Scope
 `req~search.scope~1`
 
-The search shall cover all boards the user is a member of: boards by name, tasks by title or note, tasks of every state.
+The search shall cover all boards the user is a member of: boards by title, tasks by title or note, tasks of every state.
 
 Covers:
 - `feat~search~1`
@@ -31,7 +31,7 @@ Covers:
 ### Result display
 `req~search.result~2`
 
-A board result shall show emoji and name; a task result shall show title, board emoji and name followed by ": " and the list title unless the task is in the default list or the list title is longer than 24 characters, and a marker for done or archived tasks.
+A board result shall show emoji and title; a task result shall show title, board emoji and title followed by ": " and the list title unless the task is in the default list or the list title is longer than 24 characters, and a marker for done or archived tasks.
 
 Covers:
 - `feat~search~1`

@@ -200,7 +200,7 @@ def boards_for(user):
     for share in Share.objects.filter(user=user).select_related("board__owner"):
         share.board.role = share.role
         shared.append(share.board)
-    shared.sort(key=lambda b: (b.name.lower(), b.id))
+    shared.sort(key=lambda b: (b.title.lower(), b.id))
     return own, shared
 
 
@@ -220,35 +220,35 @@ def board_content(board, states=None):
 STARTER_BOARDS = [("My Todos", "🧹"), ("Shopping List", "🛒")]
 
 
-def board_slug(owner, name, board=None):
+def board_slug(owner, title, board=None):
     taken = Board.objects.filter(owner=owner)
     if board is not None:
         taken = taken.exclude(pk=board.pk)
-    return unique_slug(name, set(taken.values_list("slug", flat=True)), "board")
+    return unique_slug(title, set(taken.values_list("slug", flat=True)), "board")
 
 
 def create_starter_boards(user):
-    for name, emoji in STARTER_BOARDS:
-        create_board(user, name, emoji)
+    for title, emoji in STARTER_BOARDS:
+        create_board(user, title, emoji)
 
 
 @transaction.atomic
-def create_board(user, name, emoji="", position=None):
-    name = clean_text(name, "Board name", 100)
+def create_board(user, title, emoji="", position=None):
+    title = clean_text(title, "Board title", 100)
     emoji = clean_emoji(emoji)
     siblings = list(Board.objects.select_for_update().filter(owner=user).order_by("position", "id"))
-    board = Board.objects.create(owner=user, name=name, emoji=emoji, slug=board_slug(user, name))
+    board = Board.objects.create(owner=user, title=title, emoji=emoji, slug=board_slug(user, title))
     List.objects.create(board=board, is_default=True, position=0)
     _place(siblings, board, position)
     board.role = OWNER
     return board
 
 
-def update_board(user, board_id, name=UNSET, emoji=UNSET):
+def update_board(user, board_id, title=UNSET, emoji=UNSET):
     board = get_board(user, board_id, OWNER_ONLY)
-    if name is not UNSET:
-        board.name = clean_text(name, "Board name", 100)
-        board.slug = board_slug(board.owner, board.name, board)
+    if title is not UNSET:
+        board.title = clean_text(title, "Board title", 100)
+        board.slug = board_slug(board.owner, board.title, board)
     if emoji is not UNSET:
         board.emoji = clean_emoji(emoji)
     board.save()
@@ -335,7 +335,7 @@ def remove_share(user, share_id):
 @transaction.atomic
 def create_list(user, board_id, title, position=None):
     board = get_board(user, board_id, WRITE)
-    title = clean_text(title, "List name", 100)
+    title = clean_text(title, "List title", 100)
     siblings = list(board.lists.select_for_update().order_by("position", "id"))
     lst = List.objects.create(board=board, title=title, position=len(siblings))
     _place(siblings, lst, position, minimum=1)
@@ -351,7 +351,7 @@ def _custom_list(user, list_id):
 
 def rename_list(user, list_id, title):
     lst = _custom_list(user, list_id)
-    lst.title = clean_text(title, "List name", 100)
+    lst.title = clean_text(title, "List title", 100)
     lst.save(update_fields=["title"])
     return lst
 
@@ -496,7 +496,7 @@ def search(user, query, limit=50):
         return [], []
     board_ids = member_board_ids(user)
     boards = list(
-        Board.objects.filter(id__in=board_ids, name__icontains=query).select_related("owner").order_by(Lower("name"), "id")[:limit]
+        Board.objects.filter(id__in=board_ids, title__icontains=query).select_related("owner").order_by(Lower("title"), "id")[:limit]
     )
     tasks = list(
         ordered_tasks(

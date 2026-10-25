@@ -93,11 +93,11 @@ class TestCss:
 class TestValidation:
     def test_name_required(self):
         with pytest.raises(s.Invalid):
-            s.clean_text("   ", "Board name", 100)
+            s.clean_text("   ", "Board title", 100)
 
     def test_name_too_long(self):
         with pytest.raises(s.Invalid):
-            s.clean_text("x" * 101, "Board name", 100)
+            s.clean_text("x" * 101, "Board title", 100)
 
     def test_emoji(self):
         assert s.clean_emoji("🌼") == "🌼"
@@ -146,7 +146,7 @@ class TestSerializers:
     def test_board(self):
         from accounts.models import User
 
-        board = Board(id=1, name="Home", slug="home", emoji="🏡", owner=User(id=3, display_name="Leon", username="leon"))
+        board = Board(id=1, title="Home", slug="home", emoji="🏡", owner=User(id=3, display_name="Leon", username="leon"))
         board.role = "owner"
         data = board_data(board, [])
         assert data["owner"] == {"id": 3, "display_name": "Leon"}

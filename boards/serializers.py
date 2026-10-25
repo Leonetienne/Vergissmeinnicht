@@ -35,7 +35,7 @@ def board_data(board, lists=None):
     """Lists are included when given as (list, tasks) pairs."""
     data = {
         "id": board.id,
-        "name": board.name,
+        "title": board.title,
         "emoji": board.emoji,
         "url": board.get_absolute_url(),
         "owner": user_data(board.owner),
