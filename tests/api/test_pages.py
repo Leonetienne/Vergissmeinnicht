@@ -285,6 +285,14 @@ class TestBoardPages:
         assert json.loads(client.get(f"/export/task/{task.id}.json").content)["title"] == "Oat milk"
         assert 'filename="oat-milk.json"' in client.get(f"/export/task/{task.id}.json")["Content-Disposition"]
 
+    def test_header_home_link(self, client, people):
+        client.force_login(people[0])
+        content = client.get("/").content.decode()
+        assert '<a class="vm-header__app" href="/">' in content and "Leon's Home" in content
+        people[0].display_name = "Jonas"
+        people[0].save()
+        assert "Jonas' Home" in client.get("/").content.decode()
+
     def test_footer(self, client, settings, db):
         settings.APP_VERSION = "1.4.0"
         content = client.get("/login").content.decode()

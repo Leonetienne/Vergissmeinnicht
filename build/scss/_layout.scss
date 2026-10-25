@@ -22,6 +22,9 @@ button { font-family: inherit; }
 .vm-backdrop--fit { background-size: contain; }
 
 .vm-header { position: sticky; top: 0; z-index: 20; }
+.vm-header__app { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.vm-header__app span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vm-header__icon { width: 24px; height: 24px; flex: none; }
 .vm-header__menu { position: relative; }
 .vm-header__menu .vm-menu { position: absolute; right: 0; top: calc(100% + var(--space-1)); }
 .vm-menu button {

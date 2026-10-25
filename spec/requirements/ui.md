@@ -25,9 +25,9 @@ Covers:
 - `feat~ui~1`
 
 ### Header
-`req~ui.header~1`
+`req~ui.header~2`
 
-Every logged-in page shall have a header with the app name linking to the board list, a search button and a menu with Settings and Logout.
+Every logged-in page shall have a header with the app icon followed by "<display name>'s Home" linking to the board list, a search button and a menu with Settings and Logout.
 
 Covers:
 - `feat~ui~1`
