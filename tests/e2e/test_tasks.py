@@ -200,6 +200,16 @@ def test_anchored_task_lands_below_header(ui, owner):
     assert top >= ui.css(".vm-header").rect["height"]
 
 
+def test_leftmost_card_ring_fits_inside_board(ui, owner):
+    ui.create_board("Edges")
+    ui.add_task("Edge task")
+    board = ui.css(".vm-board").rect
+    card = ui.card("Edge task").rect
+    title = ui.css(".vm-page-title").rect
+    assert card["x"] - board["x"] >= 4
+    assert card["x"] == title["x"]
+
+
 def test_exports(ui, owner):
     ui.create_board("Export board")
     ui.add_task("Exported")
