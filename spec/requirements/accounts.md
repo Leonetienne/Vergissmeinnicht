@@ -37,9 +37,12 @@ Covers:
 - `feat~accounts~1`
 
 ### Password rules
-`req~accounts.password-rules~1`
+`req~accounts.password-rules~2`
 
-The system shall validate new passwords with Django's standard password validators at registration, password change and in the management commands.
+The system shall accept any new password of at least 3 characters at registration, password change and in the management commands.
+
+Rationale:
+A household app; the instance admin decides how strict to be.
 
 Covers:
 - `feat~accounts~1`
@@ -50,6 +53,17 @@ Tags: Security
 `req~accounts.display-name~1`
 
 The system shall require a display name of 1 to 100 characters for every account.
+
+Covers:
+- `feat~accounts~1`
+
+### Username
+`req~accounts.username~1`
+
+When an account is created, the system shall give it a username derived from the display name as lower-case slug, unique among all accounts by appending -1, -2 and so on, and never equal to a path the app uses itself (login, register, settings, api, mcp, export, static, logout, admin).
+
+Rationale:
+The username scopes board URLs.
 
 Covers:
 - `feat~accounts~1`

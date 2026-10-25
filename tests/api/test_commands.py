@@ -20,7 +20,7 @@ def test_create_user(db):
 
 def test_create_user_validates(db, people):
     with pytest.raises(CommandError):
-        call_command("create_user", "c@example.org", "-p", "123")
+        call_command("create_user", "c@example.org", "-p", "12")
     with pytest.raises(CommandError):
         call_command("create_user", "owner@example.org", "-p", "Forget-me-not-1")
 
@@ -78,7 +78,7 @@ class TestReminders:
         assert sorted(m.to[0] for m in mail.outbox) == ["editor@example.org", "owner@example.org"]
         body = mail.outbox[0].body
         assert "Soon" in body and "Now" in body and "Later" not in body and "Done" not in body
-        assert f"/{board.id}-household/#task-{now.id}" in body
+        assert f"/leon/household/#task-{now.id}" in body
         assert mail.outbox[0].subject == "2 tasks due"
         assert Task.objects.get(pk=now.id).reminded_due and Task.objects.get(pk=now.id).reminded_soon
         assert Task.objects.get(pk=soon.id).reminded_soon and not Task.objects.get(pk=soon.id).reminded_due

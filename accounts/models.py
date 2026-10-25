@@ -4,6 +4,20 @@ import secrets
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
+
+# First URL segments the app uses itself, so no username may take them.
+RESERVED_USERNAMES = {"login", "logout", "register", "settings", "api", "mcp", "export", "static", "admin"}
+
+
+def unique_slug(base, taken, fallback):
+    """base, or base-1, base-2, ... whichever is not in taken."""
+    base = slugify(base)[:60].strip("-") or fallback
+    slug, n = base, 0
+    while slug in taken:
+        n += 1
+        slug = f"{base}-{n}"
+    return slug
 
 
 def hash_secret(value):
@@ -11,11 +25,18 @@ def hash_secret(value):
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, display_name="", **extra):
+    def create_user(self, email, password=None, display_name="", starter_boards=True, **extra):
+        from boards.services import create_starter_boards
+
         email = self.normalize_email(email).lower()
-        user = self.model(email=email, display_name=display_name or email.split("@")[0][:100], **extra)
+        display_name = display_name or email.split("@")[0][:100]
+        taken = set(self.filter(username__startswith=slugify(display_name)[:60]).values_list("username", flat=True))
+        username = unique_slug(display_name, taken | RESERVED_USERNAMES, "user")
+        user = self.model(email=email, display_name=display_name, username=username, **extra)
         user.set_password(password)
         user.save(using=self._db)
+        if starter_boards:
+            create_starter_boards(user)
         return user
 
     def create_superuser(self, email, password=None, **extra):
@@ -29,6 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     BACKDROP_MODES = [("cover", "Cover"), ("fit", "Fit")]
 
     email = models.EmailField(unique=True)
+    username = models.SlugField(max_length=70, unique=True)
     display_name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

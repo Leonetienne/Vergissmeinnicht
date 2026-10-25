@@ -11,9 +11,9 @@ Covers:
 - `feat~lists~1`
 
 ### Default list appearance
-`req~lists.default.appearance~1`
+`req~lists.default.appearance~2`
 
-The system shall show the default list leftmost, without header, title or delete button, styled so its tasks look like loose tasks beside the other lists.
+The system shall show the default list leftmost, without header, title or delete button, styled so its tasks look like loose tasks beside the other lists; while it holds no visible task and the board has other lists, the system shall hide it.
 
 Rationale:
 Lists only become a visible concept once a user creates one.

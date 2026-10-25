@@ -31,14 +31,14 @@ button { font-family: inherit; }
 .vm-menu button:hover { background: var(--accent-soft); }
 .vm-menu form { display: grid; margin: 0; }
 
-.vm-main { flex: 1; box-sizing: border-box; width: 100%; padding: var(--space-6); }
+.vm-main { flex: 1; box-sizing: border-box; width: 100%; min-width: 0; padding: var(--space-6); }
 .vm-footer { margin-top: auto; }
 @media (max-width: 768px) {
   .vm-main { padding: var(--space-4); }
 }
 
 .vm-page-title { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-4); }
-.vm-page-title h1 { font: 600 24px/30px var(--font-sans); margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.vm-page-title h1 { flex: 0 1 auto; font: 600 24px/30px var(--font-sans); margin: 0; min-width: 0; overflow-wrap: break-word; }
 .vm-page-title__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-left: auto; }
 .vm-board-tools { margin-bottom: var(--space-3); display: flex; gap: var(--space-2); align-items: center; }
 .vm-board-tools .vm-input { width: var(--list-width); max-width: 100%; }
@@ -46,9 +46,8 @@ button { font-family: inherit; }
 .vm-list__cards { display: flex; flex-direction: column; gap: var(--space-2); min-height: 8px; }
 .vm-list__header .vm-inline-host { min-width: 0; overflow-wrap: anywhere; }
 .vm-page-export { display: flex; justify-content: flex-end; margin-top: var(--space-4); }
-.vm-card__title .vm-inline { display: inline; }
-.vm-card { cursor: default; }
-.vm-card--drag { cursor: grab; }
+.vm-card { cursor: pointer; }
+.vm-card--drag:active { cursor: grabbing; }
 .vm-card--highlight { transition: outline-color 0.4s; }
 .vm-card.sortable-ghost, .vm-list.sortable-ghost { opacity: 0.4; }
 .vm-card.sortable-drag { box-shadow: var(--shadow-pop); }
@@ -57,7 +56,13 @@ button { font-family: inherit; }
 
 .vm-boards { display: grid; gap: var(--space-2); max-width: 640px; margin: 0 auto; }
 .vm-boards__section { margin-top: var(--space-8); }
-.vm-board-entry__name:hover { text-decoration: underline; }
+.vm-board-entry { position: relative; cursor: pointer; }
+.vm-board-entry:hover { border-color: var(--border-strong); }
+.vm-board-entry__link { position: absolute; inset: 0; border-radius: inherit; }
+.vm-board-entry > .vm-emoji-control, .vm-board-entry__name .vm-inline, .vm-board-entry__name .vm-inline-input { position: relative; z-index: 1; }
+.vm-board-entry__name { flex: 0 1 auto; pointer-events: none; overflow-wrap: anywhere; }
+.vm-board-entry__name .vm-inline, .vm-board-entry__name .vm-inline-input { pointer-events: auto; }
+.vm-board-entry__meta { margin-left: auto; pointer-events: none; }
 
 .vm-overlay { position: fixed; inset: 0; z-index: 50; overflow-y: auto; box-sizing: border-box; }
 .vm-overlay--top { place-items: start center; padding-top: 10vh; }
@@ -78,5 +83,5 @@ button { font-family: inherit; }
 .vm-settings form > .vm-btn { justify-self: start; }
 .vm-inline-form { display: inline; margin: 0; }
 
-.vm-archive-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
-.vm-archive-group { margin-bottom: var(--space-6); max-width: 640px; display: grid; gap: var(--space-2); }
+.vm-combobox { position: relative; }
+.vm-combobox__options { margin-top: var(--space-1); }

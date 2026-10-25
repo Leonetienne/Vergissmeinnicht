@@ -29,9 +29,9 @@ Covers:
 - `feat~search~1`
 
 ### Result display
-`req~search.result~1`
+`req~search.result~2`
 
-A board result shall show emoji and name; a task result shall show title, board emoji and name, and a marker for done or archived tasks.
+A board result shall show emoji and name; a task result shall show title, board emoji and name followed by ": " and the list title unless the task is in the default list or the list title is longer than 24 characters, and a marker for done or archived tasks.
 
 Covers:
 - `feat~search~1`

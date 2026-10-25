@@ -1,3 +1,4 @@
+from accounts.models import User
 from boards import services as s
 from boards.models import Board, List, Share, Task
 
@@ -53,12 +54,38 @@ def test_board_get_hidden_from_strangers(call, people, board):
 
 def test_update_board_owner_only(call, people, board):
     owner, editor, observer, stranger = people
-    assert call("board_update", owner, board_id=board.id, name="Home", emoji="🏡").data["url"] == f"/{board.id}-home/"
+    assert call("board_update", owner, board_id=board.id, name="Home", emoji="🏡").data["url"] == "/leon/home/"
     refused(call("board_update", editor, board_id=board.id, name="X"), 403)
     refused(call("board_update", observer, board_id=board.id, emoji="🌼"), 403)
     refused(call("board_update", stranger, board_id=board.id, name="X"), 404)
     refused(call("board_update", owner, board_id=board.id, emoji="abc"), 400)
     assert Board.objects.get(pk=board.id).name == "Home"
+
+
+def test_starter_boards(db):
+    user = User.objects.create_user("new@example.org", "pw1", display_name="New")
+    assert list(Board.objects.filter(owner=user).values_list("name", "emoji", "slug")) == [
+        ("My Todos", "🧹", "my-todos"), ("Shopping List", "🛒", "shopping-list")]
+    assert all(b.lists.filter(is_default=True).count() == 1 for b in Board.objects.filter(owner=user))
+
+
+def test_board_slugs_unique_per_owner(call, people):
+    owner, editor = people[0], people[1]
+    first = call("board_create", owner, name="My tasks").data
+    second = call("board_create", owner, name="My tasks").data
+    third = call("board_create", owner, name="My Tasks!").data
+    assert (first["url"], second["url"], third["url"]) == ("/leon/my-tasks/", "/leon/my-tasks-1/", "/leon/my-tasks-2/")
+    assert call("board_create", editor, name="My tasks").data["url"] == "/mara-lind/my-tasks/"
+    assert call("board_update", owner, board_id=first["id"], name="My tasks").data["url"] == "/leon/my-tasks/"
+    assert call("board_update", owner, board_id=second["id"], name="Groceries").data["url"] == "/leon/groceries/"
+    assert call("board_create", owner, name="🌼").data["url"] == "/leon/board/"
+
+
+def test_usernames_unique_and_not_reserved(db):
+    assert make_user("a@example.org", "Leon").username == "leon"
+    assert make_user("b@example.org", "Léon").username == "leon-1"
+    assert make_user("c@example.org", "Settings").username == "settings-1"
+    assert make_user("d@example.org", "🌼").username == "user"
 
 
 def test_move_board_keeps_positions_gapless(call, people):

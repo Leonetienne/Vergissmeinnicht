@@ -61,6 +61,11 @@ class TestRegistration:
         assert client.get("/register").status_code == 404
         assert b"Create account" not in client.get("/login").content
 
+    def test_short_password_allowed(self, client, settings, db):
+        settings.ENABLE_REGISTRATION = True
+        client.post("/register", {"display_name": "Kid", "email": "kid@example.org", "password": "abc"})
+        assert User.objects.get(email="kid@example.org").check_password("abc")
+
     def test_register(self, client, settings, db):
         settings.ENABLE_REGISTRATION = True
         response = client.post("/register", {"display_name": "Ann", "email": "Ann@Example.org", "password": "Forget-me-not-1"})
@@ -71,7 +76,7 @@ class TestRegistration:
         ({"display_name": "", "email": "a@example.org", "password": "Forget-me-not-1"}, b"Display name is required"),
         ({"display_name": "A", "email": "OWNER@example.org", "password": "Forget-me-not-1"}, b"already in use"),
         ({"display_name": "A", "email": "nope", "password": "Forget-me-not-1"}, b"Email is not valid"),
-        ({"display_name": "A", "email": "b@example.org", "password": "123"}, b"too short"),
+        ({"display_name": "A", "email": "b@example.org", "password": "12"}, b"too short"),
     ])
     def test_rejected(self, client, settings, people, data, message):
         settings.ENABLE_REGISTRATION = True
@@ -232,10 +237,13 @@ class TestBoardPages:
         data = client.get("/").context["page_data"]
         assert data["shared"][0]["name"] == "Household"
 
-    def test_board_slug_redirect(self, client, people, board):
-        client.force_login(people[0])
-        assert client.get(f"/{board.id}-wrong/")["Location"] == f"/{board.id}-household/"
-        assert client.get(f"/{board.id}-wrong/archive/")["Location"] == f"/{board.id}-household/archive/"
+    def test_board_url_by_owner_and_slug(self, client, people, board):
+        client.force_login(people[2])
+        assert board.get_absolute_url() == "/leon/household/"
+        assert client.get("/leon/household/").context["archive"] is False
+        assert client.get("/leon/household/archive/").context["archive"] is True
+        assert client.get("/mara-lind/household/").status_code == 404
+        assert client.get("/leon/nothing/").status_code == 404
 
     def test_board_hidden_from_strangers(self, client, people, board, default_list):
         client.force_login(people[3])

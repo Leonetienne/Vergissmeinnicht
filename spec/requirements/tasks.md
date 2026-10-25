@@ -31,9 +31,9 @@ Tags: UI
 ## Creating
 
 ### Quick entry
-`req~tasks.create~1`
+`req~tasks.create~2`
 
-Every list shall contain an input for a new task below its open tasks; when an editor or the owner types a title and presses Enter, the system shall create an open task at the end of the list's open tasks, clear the input and keep the focus in it.
+Every list shall contain an input for a new task at its top, above the cards; when an editor or the owner types a title and presses Enter, the system shall create an open task at the end of the list's open tasks, clear the input and keep the focus in it.
 
 Covers:
 - `feat~tasks~1`
@@ -144,18 +144,18 @@ Covers:
 
 ## Editing and moving
 
-### Inline title edit
-`req~tasks.title-inline~1`
+### Reorder and move
+`req~tasks.drag~2`
 
-The task title shall be editable inline; it shall be the only inline-editable task field.
+When an editor or the owner drags an open or done task to another position in its list or into another list, the system shall store its new list and position, keeping its state and placing it among the tasks of that state.
 
 Covers:
 - `feat~tasks~1`
 
-### Reorder and move
-`req~tasks.drag~1`
+### Drop outside lists
+`req~tasks.drop-outside~1`
 
-When an editor or the owner drags an open task to another position in its list or into another list, the system shall store its new list and position; done tasks shall not be draggable.
+When an editor or the owner drops a task outside every list, the system shall move it to the end of its state's tasks in the default list and show the default list again.
 
 Covers:
 - `feat~tasks~1`
@@ -171,9 +171,9 @@ Covers:
 Tags: UI
 
 ### Singleview
-`req~tasks.singleview~1`
+`req~tasks.singleview~2`
 
-When a member clicks the "..." button of a task card, the system shall open a small popup with the title, due date (with clear), colour circles, the note as textarea and a "Json export" link; for editors and the owner every change shall be saved immediately, for observers all fields shall be read-only.
+When a member clicks or taps a task card outside its checkbox and delete button, the system shall open a small popup with the title, due date (with clear), colour circles, the note as textarea and a "Json export" link; a drag shall move the card without opening it; for editors and the owner every change shall be saved immediately, for observers and on the archive page all fields shall be read-only.
 
 Covers:
 - `feat~tasks~1`

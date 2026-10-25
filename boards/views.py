@@ -1,21 +1,18 @@
 import json
 
 from django.http import Http404, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 
 from . import services as s
 from .models import Task
 from .serializers import board_data, board_with_lists, list_data, task_data
 
 
-def _member_board(request, board_id, slug, suffix=""):
+def _member_board(request, username, slug):
     try:
-        board = s.get_board(request.user, board_id)
+        return s.get_board_by_slug(request.user, username, slug)
     except s.ServiceError:
         raise Http404
-    if slug != board.slug:
-        return board, redirect(board.get_absolute_url() + suffix)
-    return board, None
 
 
 def home(request):
@@ -25,20 +22,17 @@ def home(request):
     })
 
 
-def board_page(request, board_id, slug):
-    board, redirect_response = _member_board(request, board_id, slug)
-    if redirect_response:
-        return redirect_response
-    s.board_content(board, states=[Task.OPEN, Task.DONE])
-    return render(request, "boards/board.html", {"board": board, "page_data": board_with_lists(board)})
+def board_page(request, username, slug, archive=False):
+    board = _member_board(request, username, slug)
+    states = [Task.ARCHIVED] if archive else [Task.OPEN, Task.DONE]
+    s.board_content(board, states=states)
+    return render(request, "boards/board.html", {
+        "board": board, "archive": archive, "page_data": board_with_lists(board),
+    })
 
 
-def archive_page(request, board_id, slug):
-    board, redirect_response = _member_board(request, board_id, slug, "archive/")
-    if redirect_response:
-        return redirect_response
-    s.board_content(board, states=[Task.ARCHIVED])
-    return render(request, "boards/archive.html", {"board": board, "page_data": board_with_lists(board)})
+def archive_page(request, username, slug):
+    return board_page(request, username, slug, archive=True)
 
 
 def _download(data, slug):

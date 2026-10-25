@@ -92,7 +92,8 @@ class UI:
     def confirm(self, ok=True):
         dialog = self.css("[role=alertdialog]")
         assert dialog.is_displayed()
-        self.click(self.button("OK" if ok else "Cancel"))
+        label = "OK" if ok else "Cancel"
+        self.click(dialog.find_element(By.XPATH, f".//button[normalize-space()='{label}']"))
 
     def text(self, selector="body"):
         return self.css(selector).text
@@ -103,7 +104,7 @@ class UI:
     def create_board(self, name):
         self.go("/")
         self.type(self.css("input[aria-label='New board']"), name + Keys.ENTER)
-        self.click(self.xpath(f"//a[normalize-space()='{name}']"))
+        self.click(self.css(f"a[aria-label='Open {name}']"))
 
     def list_section(self, title=None):
         if title is None:
@@ -116,6 +117,9 @@ class UI:
 
     def card(self, title):
         return self.xpath(f"//article[contains(@class,'vm-card')][.//*[normalize-space()='{title}']]")
+
+    def open_card(self, title):
+        self.click(self.css(".vm-card__title", self.card(title)))
 
     def titles(self, list_title=None):
         return [c.text.split("\n")[0] for c in self.all(".vm-card", self.list_section(list_title))]

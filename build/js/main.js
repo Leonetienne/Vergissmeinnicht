@@ -5,7 +5,6 @@ import "./emoji";
 import "./search";
 import "./board";
 import "./home";
-import "./archive";
 import "./settings";
 
 window.Alpine = Alpine;

@@ -21,12 +21,9 @@ Covers:
 Tags: UI
 
 ### Board list entry
-`req~boards.list.entry~2`
+`req~boards.list.entry~3`
 
-Each board list entry shall show the emoji field left of the board name and link the name to the board page; for the owner, a rename button next to the name shall start inline editing of the name.
-
-Rationale:
-A click on the name opens the board, so renaming needs its own trigger.
+Each board list entry shall be one card that opens the board page when clicked anywhere, except on the emoji field, which opens the emoji picker for the owner, and the board name, which starts inline editing for the owner.
 
 Covers:
 - `feat~boards~1`
@@ -47,6 +44,17 @@ Covers:
 `req~boards.create~1`
 
 When a user types a name into the input at the end of their own boards and presses Enter, the system shall create the board with an empty default list, show it in the list with an empty emoji placeholder, and clear the input for the next name.
+
+Covers:
+- `feat~boards~1`
+
+### Starter boards
+`req~boards.starter~1`
+
+When an account is created, the system shall create the boards "My Todos" with emoji 🧹 and "Shopping List" with emoji 🛒 for it.
+
+Rationale:
+Shows new users what boards are for.
 
 Covers:
 - `feat~boards~1`
@@ -126,9 +134,9 @@ Covers:
 ## Board page
 
 ### Board URL
-`req~boards.page.url~1`
+`req~boards.page.url~2`
 
-The system shall serve each board at `/<id>-<slug>/`, with the slug derived from the board name; if the slug in a request does not match the current name, then the system shall redirect to the current URL.
+The system shall serve each board at `/<username>/<slug>/` with the owner's username and a slug derived from the board name, unique among the owner's boards by appending -1, -2 and so on; when the board is renamed, the slug shall follow the new name.
 
 Covers:
 - `feat~boards~1`

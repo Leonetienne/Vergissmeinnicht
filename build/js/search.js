@@ -1,6 +1,8 @@
 import Alpine from "alpinejs";
 import { op } from "./api";
 
+const LIST_LABEL_MAX = 24;
+
 Alpine.data("searchPopup", () => ({
   open: false,
   query: "",
@@ -44,7 +46,7 @@ Alpine.data("searchPopup", () => ({
       ...data.tasks.map((t) => ({
         key: "t" + t.id,
         label: t.title,
-        where: where(t.board),
+        where: where(t.board) + (t.list.is_default || t.list.title.length > LIST_LABEL_MAX ? "" : ": " + t.list.title),
         tag: t.state === "open" ? "" : t.state,
         url: t.board.url + (t.state === "archived" ? "archive/" : "") + "#task-" + t.id,
       })),

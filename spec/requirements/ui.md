@@ -49,9 +49,9 @@ Covers:
 - `feat~ui~1`
 
 ### Inline edit
-`req~ui.inline-edit~1`
+`req~ui.inline-edit~2`
 
-Inline-editable texts (board names, list titles, task titles) shall show as plain text until clicked, then turn into an input; Enter or leaving the input shall save, Esc shall restore the previous value; an empty value shall restore the previous value.
+Inline-editable texts (board names and list titles) shall show as plain text until clicked, then turn into an input; Enter or leaving the input shall save, Esc shall restore the previous value; an empty value shall restore the previous value.
 
 Covers:
 - `feat~ui~1`

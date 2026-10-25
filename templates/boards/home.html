@@ -5,9 +5,10 @@
   <div class="vm-boards" style="width:100%" x-ref="own">
     <template x-for="board in own" :key="board.id">
       <div class="vm-board-entry" :data-board-id="board.id">
+        <a class="vm-board-entry__link" :href="board.url" draggable="false" :aria-label="'Open ' + board.name" @click="openGuard($event)"></a>
         {% include "partials/_emoji_picker.html" with get="() => board.emoji" set="e => setEmoji(board, e)" editable="true" %}
-        <span style="flex:1;min-width:0;display:flex;align-items:center;gap:var(--space-2)">
-          {% include "partials/_inline_edit.html" with get="() => board.name" set="v => rename(board, v)" label="board name" editable="true" link="board.url" %}
+        <span class="vm-board-entry__name">
+          {% include "partials/_inline_edit.html" with get="() => board.name" set="v => rename(board, v)" label="board name" editable="true" %}
         </span>
       </div>
     </template>
@@ -20,8 +21,9 @@
       <h2 class="vm-section-title">Shared with me</h2>
       <template x-for="board in shared" :key="board.id">
         <div class="vm-board-entry">
+          <a class="vm-board-entry__link" :href="board.url" :aria-label="'Open ' + board.name"></a>
           <span class="vm-emoji vm-emoji--readonly" x-text="board.emoji"></span>
-          <a class="vm-board-entry__name" :href="board.url" x-text="board.name"></a>
+          <span class="vm-board-entry__name" x-text="board.name"></span>
           <span class="vm-board-entry__meta" x-text="board.owner.display_name + ' · ' + (board.role === 'editor' ? 'Editor' : 'Observer')"></span>
         </div>
       </template>

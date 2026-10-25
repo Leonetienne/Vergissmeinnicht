@@ -3,6 +3,8 @@ from django.db import transaction
 from django.db.models import Case, IntegerField, Prefetch, Q, When
 from django.db.models.functions import Lower
 
+from accounts.models import unique_slug
+
 from .models import Board, List, Share, Task
 
 OWNER = "owner"
@@ -120,6 +122,14 @@ def _check(user, board, need, missing):
     return role
 
 
+def get_board_by_slug(user, username, slug):
+    board = Board.objects.select_related("owner").filter(owner__username=username, slug=slug).first()
+    if board is None:
+        raise NotFound("Board not found")
+    _check(user, board, READ, "Board not found")
+    return board
+
+
 def get_board(user, board_id, need=READ):
     board = Board.objects.select_related("owner").filter(pk=board_id).first()
     if board is None:
@@ -207,12 +217,27 @@ def board_content(board, states=None):
     return board
 
 
+STARTER_BOARDS = [("My Todos", "🧹"), ("Shopping List", "🛒")]
+
+
+def board_slug(owner, name, board=None):
+    taken = Board.objects.filter(owner=owner)
+    if board is not None:
+        taken = taken.exclude(pk=board.pk)
+    return unique_slug(name, set(taken.values_list("slug", flat=True)), "board")
+
+
+def create_starter_boards(user):
+    for name, emoji in STARTER_BOARDS:
+        create_board(user, name, emoji)
+
+
 @transaction.atomic
 def create_board(user, name, emoji="", position=None):
     name = clean_text(name, "Board name", 100)
     emoji = clean_emoji(emoji)
     siblings = list(Board.objects.select_for_update().filter(owner=user).order_by("position", "id"))
-    board = Board.objects.create(owner=user, name=name, emoji=emoji)
+    board = Board.objects.create(owner=user, name=name, emoji=emoji, slug=board_slug(user, name))
     List.objects.create(board=board, is_default=True, position=0)
     _place(siblings, board, position)
     board.role = OWNER
@@ -223,6 +248,7 @@ def update_board(user, board_id, name=UNSET, emoji=UNSET):
     board = get_board(user, board_id, OWNER_ONLY)
     if name is not UNSET:
         board.name = clean_text(name, "Board name", 100)
+        board.slug = board_slug(board.owner, board.name, board)
     if emoji is not UNSET:
         board.emoji = clean_emoji(emoji)
     board.save()
@@ -469,7 +495,9 @@ def search(user, query, limit=50):
     if len(query) < 2:
         return [], []
     board_ids = member_board_ids(user)
-    boards = list(Board.objects.filter(id__in=board_ids, name__icontains=query).order_by(Lower("name"), "id")[:limit])
+    boards = list(
+        Board.objects.filter(id__in=board_ids, name__icontains=query).select_related("owner").order_by(Lower("name"), "id")[:limit]
+    )
     tasks = list(
         ordered_tasks(
             Task.objects.filter(Q(title__icontains=query) | Q(note__icontains=query), list__board_id__in=board_ids)

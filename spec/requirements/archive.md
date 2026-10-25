@@ -17,9 +17,9 @@ Covers:
 - `feat~archive~1`
 
 ### Archive page
-`req~archive.page~1`
+`req~archive.page~2`
 
-The archive page shall list all archived tasks of the board grouped by list in list order, each card with its title, due date, colour and note like on the board page.
+The archive page shall look like the board page, with the same lists as columns in list order, showing the archived tasks instead of open and done ones, and without new-task inputs, list editing, dragging or deleting.
 
 Covers:
 - `feat~archive~1`

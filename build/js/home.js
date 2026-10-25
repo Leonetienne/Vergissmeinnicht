@@ -1,7 +1,6 @@
 import Alpine from "alpinejs";
-import Sortable from "sortablejs";
 import { op } from "./api";
-import { newTempId, page } from "./page";
+import { makeSortable, mergeById, newTempId, page, recentlyDragged } from "./page";
 import { failToast, readJSON } from "./ui";
 import { remap, rid } from "./undo";
 
@@ -14,29 +13,24 @@ Alpine.data("boardList", () => {
 
     init() {
       this.initPage();
-      Sortable.create(this.$refs.own, {
-        animation: 120,
-    forceFallback: true,
-        delay: 200,
-        delayOnTouchOnly: true,
+      makeSortable(this.$refs.own, {
         draggable: ".vm-board-entry",
-        filter: "button, input",
-        preventOnFilter: false,
-        onStart: (e) => (e.item._vmNext = e.item.nextSibling),
-        onEnd: (e) => {
-          e.from.insertBefore(e.item, e.item._vmNext);
-          if (e.oldDraggableIndex === e.newDraggableIndex) return;
+        onDrop: (e) => {
           const board = this.own.find((b) => String(b.id) === e.item.dataset.boardId);
           if (board) this.move(board, e.oldDraggableIndex, e.newDraggableIndex);
         },
       });
     },
+    // The card is one big link; the click that ends a drag must not open the board.
+    openGuard(event) {
+      if (recentlyDragged()) event.preventDefault();
+    },
 
     async reload() {
       try {
         const fresh = await op("boards_list");
-        this.own = fresh.own;
-        this.shared = fresh.shared;
+        this.own = mergeById(this.own, fresh.own);
+        this.shared = mergeById(this.shared, fresh.shared);
       } catch (error) {
         failToast(error);
       }

@@ -19,6 +19,7 @@ def test_search_scope_and_order(call, people, board, default_list):
     assert [b["name"] for b in data["boards"]] == ["Garden"]
     assert {t["state"] for t in data["tasks"]} == {"open", "archived"}
     assert data["tasks"][0]["board"]["name"] == "Household"
+    assert data["tasks"][0]["list"]["is_default"] is True
     assert call("search", owner, q="g").data == {"boards": [], "tasks": []}
 
 

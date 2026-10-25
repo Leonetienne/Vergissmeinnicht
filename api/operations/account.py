@@ -1,6 +1,6 @@
 from accounts import services as acc
 from boards import services as s
-from boards.serializers import board_data, task_data
+from boards.serializers import board_data, list_data, task_data
 
 from ..registry import READ, WRITE, operation
 
@@ -12,7 +12,7 @@ def search(user, q):
     boards, tasks = s.search(user, q)
     return {
         "boards": [board_data(b) for b in boards],
-        "tasks": [{**task_data(t), "board": board_data(t.list.board)} for t in tasks],
+        "tasks": [{**task_data(t), "board": board_data(t.list.board), "list": list_data(t.list)} for t in tasks],
     }
 
 

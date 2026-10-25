@@ -18,7 +18,7 @@ class Result:
 
 
 def make_user(email, name=None):
-    return User.objects.create_user(email, "Forget-me-not-1", display_name=name or email.split("@")[0])
+    return User.objects.create_user(email, "Forget-me-not-1", display_name=name or email.split("@")[0], starter_boards=False)
 
 
 class Transport:

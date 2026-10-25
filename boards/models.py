@@ -11,21 +11,19 @@ class Board(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="boards")
     name = models.CharField(max_length=100)
     emoji = models.CharField(max_length=32, blank=True)
+    slug = models.SlugField(max_length=70)
     position = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ["position", "id"]
+        constraints = [models.UniqueConstraint(fields=["owner", "slug"], name="board_slug_per_owner")]
 
     def __str__(self):
         return self.name
 
-    @property
-    def slug(self):
-        return slug_for(self.name, "board")
-
     def get_absolute_url(self):
-        return f"/{self.id}-{self.slug}/"
+        return f"/{self.owner.username}/{self.slug}/"
 
 
 class Share(models.Model):

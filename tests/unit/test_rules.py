@@ -64,7 +64,15 @@ class TestReminderStage:
 
 class TestSlugs:
     def test_board_slug(self):
-        assert Board(id=7, name="Haus & Garten!").get_absolute_url() == "/7-haus-garten/"
+        from accounts.models import User
+
+        assert Board(slug="haus-garten", owner=User(username="leon")).get_absolute_url() == "/leon/haus-garten/"
+
+    def test_unique_slug(self):
+        from accounts.models import unique_slug
+
+        assert unique_slug("Haus & Garten!", set(), "board") == "haus-garten"
+        assert unique_slug("My tasks", {"my-tasks", "my-tasks-1"}, "board") == "my-tasks-2"
 
     def test_fallback(self):
         assert slug_for("🌼", "board") == "board"
@@ -138,11 +146,11 @@ class TestSerializers:
     def test_board(self):
         from accounts.models import User
 
-        board = Board(id=1, name="Home", emoji="🏡", owner=User(id=3, display_name="Leon"))
+        board = Board(id=1, name="Home", slug="home", emoji="🏡", owner=User(id=3, display_name="Leon", username="leon"))
         board.role = "owner"
         data = board_data(board, [])
         assert data["owner"] == {"id": 3, "display_name": "Leon"}
-        assert data["url"] == "/1-home/" and data["lists"] == [] and data["role"] == "owner"
+        assert data["url"] == "/leon/home/" and data["lists"] == [] and data["role"] == "owner"
 
 
 class TestTotp:

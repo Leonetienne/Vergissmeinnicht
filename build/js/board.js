@@ -1,11 +1,11 @@
 import Alpine from "alpinejs";
-import Sortable from "sortablejs";
 import { op } from "./api";
-import { byPosition, newTempId, page } from "./page";
+import { byPosition, makeSortable, mergeById, newTempId, page, recentlyDragged } from "./page";
 import { dueClass, failToast, formatDate, highlightAnchor, readJSON } from "./ui";
 import { remap, rid } from "./undo";
 
 const COLOURS = ["none", "red", "orange", "yellow", "green", "blue", "purple", "grey", "turquoise"];
+const STATE_ORDER = { open: 0, done: 1, archived: 2 };
 
 function withoutArchived(board) {
   board.lists.forEach((list) => (list.tasks = list.tasks.filter((t) => t.state !== "archived")));
@@ -17,34 +17,22 @@ function taskArgs(task) {
   return { list_id: rid("list", task.list_id), title, position, state, due_date, colour, note };
 }
 
-function sortableOptions(onDrop, extra) {
-  return {
-    animation: 120,
-    forceFallback: true,
-    delay: 200,
-    delayOnTouchOnly: true,
-    filter: "button, input",
-    preventOnFilter: false,
-    onStart: (e) => (e.item._vmNext = e.item.nextSibling),
-    onEnd: (e) => {
-      // Alpine owns the DOM: put the element back and let the state change re-render it.
-      e.from.insertBefore(e.item, e.item._vmNext);
-      if (e.from === e.to && e.oldDraggableIndex === e.newDraggableIndex) return;
-      onDrop(e);
-    },
-    ...extra,
-  };
+function bySortOrder(a, b) {
+  return STATE_ORDER[a.state] - STATE_ORDER[b.state] || a.position - b.position;
 }
 
-Alpine.data("boardPage", () => ({
+// The board page and its archive share this component; the archive shows archived tasks with selection instead of editing.
+Alpine.data("boardPage", (archive = false) => ({
   ...page(),
-  board: withoutArchived(readJSON("vm-page-data")),
+  archive,
+  board: archive ? readJSON("vm-page-data") : withoutArchived(readJSON("vm-page-data")),
   highlighted: null,
   creatingList: false,
   newListTitle: "",
   single: null,
   noteDraft: "",
-  share: { open: false, items: [], query: "", candidates: [] },
+  selected: [],
+  share: { open: false, rows: [], removed: [], query: "", candidates: [], active: 0, saving: false },
   colours: COLOURS,
   formatDate,
   dueClass,
@@ -58,6 +46,9 @@ Alpine.data("boardPage", () => ({
   get canEdit() {
     return this.board.role !== "observer";
   },
+  get editable() {
+    return this.canEdit && !this.archive;
+  },
   get isOwner() {
     return this.board.role === "owner";
   },
@@ -67,11 +58,16 @@ Alpine.data("boardPage", () => ({
   get hasCustomLists() {
     return this.board.lists.some((l) => !l.is_default);
   },
-  openTasks(list) {
-    return list.tasks.filter((t) => t.state === "open").sort(byPosition);
+  // The empty default list hides once other lists exist; a task dropped outside every list brings it back.
+  get shownLists() {
+    return this.sortedLists.filter((l) => !l.is_default || !this.hasCustomLists || this.visibleTasks(l).length);
   },
-  doneTasks(list) {
-    return list.tasks.filter((t) => t.state === "done").sort(byPosition);
+  get anyVisible() {
+    return this.board.lists.some((l) => this.visibleTasks(l).length);
+  },
+  visibleTasks(list) {
+    const states = this.archive ? ["archived"] : ["open", "done"];
+    return list.tasks.filter((t) => states.includes(t.state)).sort(bySortOrder);
   },
   listById(id) {
     return this.board.lists.find((l) => String(l.id) === String(id));
@@ -89,8 +85,17 @@ Alpine.data("boardPage", () => ({
 
   async reload() {
     try {
-      const data = withoutArchived(await op("board_get", { board_id: this.board.id }));
-      this.board = data;
+      const data = this.archive
+        ? await op("board_archive", { board_id: this.board.id })
+        : withoutArchived(await op("board_get", { board_id: this.board.id }));
+      const { lists, ...fields } = data;
+      Object.assign(this.board, fields);
+      this.board.lists = mergeById(this.board.lists, lists, (list, fresh) => {
+        const { tasks, ...rest } = fresh;
+        Object.assign(list, rest);
+        list.tasks = mergeById(list.tasks, tasks);
+      });
+      this.selected = this.selected.filter((id) => this.findTask(id));
       if (this.single) {
         this.single = this.findTask(this.single.id);
         if (this.single) this.noteDraft = this.single.note;
@@ -104,16 +109,16 @@ Alpine.data("boardPage", () => ({
   updateBoard(fields) {
     const old = Object.fromEntries(Object.keys(fields).map((k) => [k, this.board[k]]));
     const label = "name" in fields ? "rename board" : "change emoji";
-    const apply = (result) => {
+    const follow = (result) => {
       if (!result) return;
       this.board.url = result.url;
       history.replaceState(null, "", result.url + location.hash);
     };
     this.perform(
       () => Object.assign(this.board, fields),
-      async () => apply(await op("board_update", { board_id: this.board.id, ...fields })),
-      () => [label, () => op("board_update", { board_id: this.board.id, ...old }),
-        () => op("board_update", { board_id: this.board.id, ...fields })],
+      async () => follow(await op("board_update", { board_id: this.board.id, ...fields })),
+      () => [label, async () => follow(await op("board_update", { board_id: this.board.id, ...old })),
+        async () => follow(await op("board_update", { board_id: this.board.id, ...fields }))],
     );
   },
   async deleteBoard() {
@@ -143,6 +148,22 @@ Alpine.data("boardPage", () => ({
         const ids = () => result.task_ids.map((id) => rid("task", id));
         return ["archive what's done", () => op("tasks_transition", { task_ids: ids(), state: "done" }),
           () => op("tasks_transition", { task_ids: ids(), state: "archived" })];
+      },
+    );
+  },
+  unarchive() {
+    const ids = [...this.selected];
+    if (!ids.length) return;
+    this.perform(
+      () => {
+        this.board.lists.forEach((l) => l.tasks.forEach((t) => ids.includes(t.id) && (t.state = "done")));
+        this.selected = [];
+      },
+      () => op("tasks_transition", { task_ids: ids, state: "done" }),
+      () => {
+        const current = () => ids.map((id) => rid("task", id));
+        return ["unarchive selected", () => op("tasks_transition", { task_ids: current(), state: "archived" }),
+          () => op("tasks_transition", { task_ids: current(), state: "done" })];
       },
     );
   },
@@ -217,11 +238,12 @@ Alpine.data("boardPage", () => ({
     );
   },
   initListSort() {
-    if (!this.canEdit) return;
-    Sortable.create(this.$refs.board, sortableOptions((e) => {
-      const list = this.listById(e.item.dataset.listId);
-      this.moveList(list, e.newDraggableIndex + 1);
-    }, { draggable: ".vm-list--custom", handle: ".vm-list__header" }));
+    if (!this.editable) return;
+    makeSortable(this.$refs.board, {
+      draggable: ".vm-list--custom",
+      handle: ".vm-list__header",
+      onDrop: (e) => this.moveList(this.listById(e.item.dataset.listId), e.newDraggableIndex + 1),
+    });
   },
   moveList(list, position) {
     const old = list.position;
@@ -270,7 +292,7 @@ Alpine.data("boardPage", () => ({
     );
   },
   toggle(task, checkbox) {
-    if (!this.canEdit) return;
+    if (!this.editable) return;
     const from = task.state;
     const to = from === "open" ? "done" : "open";
     checkbox.checked = to === "done";
@@ -303,20 +325,38 @@ Alpine.data("boardPage", () => ({
     );
   },
   initTaskSort(el) {
-    if (!this.canEdit) return;
-    Sortable.create(el, sortableOptions((e) => {
-      const task = this.findTask(e.item.dataset.taskId);
-      const list = this.listById(e.to.dataset.listId);
-      if (task && list) this.moveTask(task, list, e.newDraggableIndex);
-    }, { group: "tasks", draggable: ".vm-card", emptyInsertThreshold: 24 }));
+    if (!this.editable) return;
+    makeSortable(el, {
+      group: "tasks",
+      draggable: ".vm-card",
+      emptyInsertThreshold: 24,
+      onDrop: (e) => {
+        const task = this.findTask(e.item.dataset.taskId);
+        const list = this.listById(e.to.dataset.listId);
+        if (task && list) this.moveTask(task, list, e.newDraggableIndex);
+      },
+      dropZone: ".vm-list",
+      onOutside: (e) => {
+        const task = this.findTask(e.item.dataset.taskId);
+        if (task && String(task.list_id) !== String(this.defaultList.id)) {
+          this.moveTask(task, this.defaultList, this.visibleTasks(this.defaultList).length);
+        }
+      },
+    });
   },
+  // index is the drop position among the list's visible cards; tasks keep their state and land among their own state.
   moveTask(task, toList, index) {
     const fromList = this.listById(task.list_id);
-    const others = this.openTasks(toList).filter((t) => t !== task);
-    let position = 0;
-    if (index < others.length) position = others[index].position;
-    else if (others.length) position = others[others.length - 1].position + 1;
+    const cards = this.visibleTasks(toList).filter((t) => t !== task);
+    cards.splice(index, 0, task);
+    const group = cards.filter((t) => t.state === task.state);
+    const at = group.indexOf(task);
+    let position;
+    if (group[at + 1]) position = group[at + 1].position;
+    else if (group[at - 1]) position = group[at - 1].position + 1;
+    else position = Math.max(-1, ...toList.tasks.filter((t) => t !== task).map((t) => t.position)) + 1;
     if (fromList === toList && task.position < position) position -= 1;
+    if (fromList === toList && task.position === position) return;
     const old = { list: fromList, position: task.position };
     this.perform(
       () => {
@@ -334,6 +374,9 @@ Alpine.data("boardPage", () => ({
   },
 
   // Singleview
+  cardClick(task) {
+    if (!recentlyDragged()) this.openSingle(task);
+  },
   openSingle(task) {
     this.single = task;
     this.noteDraft = task.note;
@@ -344,21 +387,22 @@ Alpine.data("boardPage", () => ({
     this.single = null;
   },
   saveField(field, value) {
-    if (!this.canEdit || !this.single || this.single[field] === value) return;
+    if (!this.editable || !this.single || this.single[field] === value) return;
     this.updateTask(this.single, { [field]: value });
   },
   saveNote() {
-    if (!this.canEdit || !this.single) return;
+    if (!this.editable || !this.single) return;
     const note = this.noteDraft.trim();
     if (note !== this.single.note) this.updateTask(this.single, { note });
   },
 
-  // Sharing
+  // Sharing: changes collect in the dialog and apply on Save.
   async openShare() {
-    this.share = { open: true, items: [], query: "", candidates: [] };
+    this.share = { open: true, rows: [], removed: [], query: "", candidates: [], active: 0, saving: false };
     setTimeout(() => this.$refs.shareSearch.focus());
     try {
-      this.share.items = await op("shares_list", { board_id: this.board.id });
+      const shares = await op("shares_list", { board_id: this.board.id });
+      this.share.rows = shares.map((s) => ({ id: s.id, user: s.user, role: s.role, saved: s.role }));
     } catch (error) {
       failToast(error);
     }
@@ -370,33 +414,50 @@ Alpine.data("boardPage", () => ({
       return;
     }
     try {
-      this.share.candidates = await op("share_candidates", { board_id: this.board.id, q });
+      const found = await op("share_candidates", { board_id: this.board.id, q });
+      if (q !== this.share.query.trim()) return;
+      const chosen = new Set(this.share.rows.map((r) => r.user.id));
+      this.share.candidates = found.filter((u) => !chosen.has(u.id));
+      this.share.active = 0;
     } catch (error) {
       failToast(error);
     }
   },
-  async addShare(user) {
-    try {
-      this.share.items.push(await op("share_add", { board_id: this.board.id, user_id: user.id }));
-      this.share.query = "";
-      this.share.candidates = [];
-    } catch (error) {
-      failToast(error);
-    }
+  moveCandidate(step) {
+    const count = this.share.candidates.length;
+    if (count) this.share.active = (this.share.active + step + count) % count;
   },
-  async setRole(share, role) {
-    try {
-      Object.assign(share, await op("share_update", { share_id: share.id, role }));
-    } catch (error) {
-      failToast(error);
-    }
+  pickCandidate(user) {
+    if (!user) return;
+    const removed = this.share.removed.find((r) => r.user.id === user.id);
+    this.share.removed = this.share.removed.filter((r) => r !== removed);
+    this.share.rows.push(removed || { id: null, user, role: "observer", saved: null });
+    this.share.query = "";
+    this.share.candidates = [];
+    this.$refs.shareSearch.focus();
   },
-  async removeShare(share) {
+  dropRow(row) {
+    this.share.rows = this.share.rows.filter((r) => r !== row);
+    if (row.id) this.share.removed.push(row);
+  },
+  get shareDirty() {
+    return this.share.removed.length > 0 || this.share.rows.some((r) => r.role !== r.saved);
+  },
+  async saveShares() {
+    this.share.saving = true;
     try {
-      await op("share_remove", { share_id: share.id });
-      this.share.items = this.share.items.filter((s) => s !== share);
+      for (const row of this.share.removed) await op("share_remove", { share_id: row.id });
+      for (const row of this.share.rows) {
+        if (!row.id) await op("share_add", { board_id: this.board.id, user_id: row.user.id, role: row.role });
+        else if (row.role !== row.saved) await op("share_update", { share_id: row.id, role: row.role });
+      }
+      this.share.open = false;
+      window.toast("Sharing saved");
     } catch (error) {
       failToast(error);
+      await this.openShare();
+    } finally {
+      this.share.saving = false;
     }
   },
 }));

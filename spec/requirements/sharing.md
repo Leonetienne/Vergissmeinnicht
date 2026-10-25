@@ -1,9 +1,9 @@
 # Board Sharing
 
 ### Share dialog
-`req~sharing.dialog~1`
+`req~sharing.dialog~2`
 
-When the owner opens "Share" on the board page, the system shall show the current shares with role and a user search to add new ones.
+When the owner opens "Share" on the board page, the system shall show the current shares with role, a user combobox to add new ones and "Save"; additions, role changes and removals shall apply together on "Save" and be discarded on "Cancel" or close.
 
 Covers:
 - `feat~sharing~1`
@@ -19,9 +19,9 @@ Covers:
 - `feat~sharing~1`
 
 ### Add share
-`req~sharing.add~1`
+`req~sharing.add~2`
 
-When the owner picks a user from the search and a role (observer or editor, default observer), the system shall grant the share immediately, without invitation or acceptance.
+When the owner picks a user from the combobox suggestions by click or arrow keys and Enter, the system shall add the user to the share list with role observer, changeable to editor, and grant the share on "Save", without invitation or acceptance.
 
 Covers:
 - `feat~sharing~1`
