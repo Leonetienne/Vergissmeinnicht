@@ -51,6 +51,14 @@ class TestLogin:
         assert response["Location"] == "/login"
         assert client.get("/")["Location"].startswith("/login")
 
+    @pytest.mark.parametrize("display_name", ["mcp", "login", "register"])
+    def test_board_of_username_like_public_path_redirects(self, client, db, display_name):
+        user = make_user(f"{display_name}@example.org", display_name)
+        board = s.create_board(user, "Plans")
+        path = f"/{user.username}/{board.slug}/"
+        response = client.get(path)
+        assert response.status_code == 302 and response["Location"] == f"/login?next={path}"
+
     def test_api_is_not_redirected(self, client, people):
         assert client.get("/api/v1/boards/").status_code == 401
 
