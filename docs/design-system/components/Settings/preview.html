@@ -1,0 +1,40 @@
+<!-- @dsCard group="Account" height=1900 -->
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Settings</title><style>html,body{margin:0}body{background:var(--bg)}</style></head>
+<body>
+<div class="vm-preview" style="justify-content:center"><div class="vm-settings">
+<h1 class="vm-auth__app">Settings</h1>
+<section class="vm-settings__section"><h2 class="vm-section-title">Profile</h2>
+<div class="vm-grid-2"><label class="vm-field"><span>Display name</span><input class="vm-input" value="Leon"></label><label class="vm-field"><span>Email</span><input class="vm-input" type="email" value="leon@example.org"></label></div>
+<button class="vm-btn vm-btn--primary">Save</button></section>
+<section class="vm-settings__section"><h2 class="vm-section-title">Password</h2>
+<div class="vm-grid-2"><label class="vm-field"><span>Current password</span><input class="vm-input" type="password"></label><label class="vm-field"><span>New password</span><input class="vm-input" type="password"></label></div>
+<button class="vm-btn vm-btn--primary">Change password</button></section>
+<section class="vm-settings__section"><h2 class="vm-section-title">Notifications</h2>
+<label class="vm-toggle"><input type="checkbox" class="vm-check" checked>Due date reminders</label>
+<button class="vm-btn vm-btn--primary">Save</button></section>
+<section class="vm-settings__section"><h2 class="vm-section-title">Second factor</h2>
+<p class="vm-help">Not set up.</p><button class="vm-btn">Set up</button></section>
+<section class="vm-settings__section"><h2 class="vm-section-title">API key</h2>
+<p class="vm-help">Created Mar 3, 2026 · Last used Mar 20, 2026</p>
+<div class="vm-field"><span>New key, shown once</span><div class="vm-row"><span class="vm-code" style="flex:1">vmk_4f1c9e2a7b0d63e85a1f</span><button class="vm-btn vm-btn--sm">Copy</button></div></div>
+<div class="vm-row"><button class="vm-btn">Generate</button><button class="vm-btn">Revoke</button></div></section>
+<section class="vm-settings__section"><h2 class="vm-section-title">MCP key</h2>
+<p class="vm-help">No key.</p><button class="vm-btn">Generate</button></section>
+<section class="vm-settings__section"><h2 class="vm-section-title">Appearance</h2>
+<label class="vm-field"><span>Backdrop</span><div class="vm-row"><input type="file" accept="image/png,image/jpeg,image/webp,image/gif" style="flex:1;font:400 13px/18px var(--font-sans);color:var(--ink-muted)"><button class="vm-btn vm-btn--sm">Remove</button></div></label>
+<p class="vm-help">PNG, JPEG, WebP or GIF, up to 20 MB.</p>
+<div class="vm-grid-2"><label class="vm-field"><span>Backdrop mode</span><select class="vm-select" style="width:100%"><option>Cover</option><option>Fit</option></select></label>
+<label class="vm-field"><span>Backdrop opacity</span><span class="vm-range-row"><input type="range" class="vm-range" min="0" max="100" value="80">80</span></label></div>
+<label class="vm-field"><span>Backdrop CSS</span><textarea class="vm-textarea vm-code" style="min-height:64px">filter: blur(2px);
+background-position: center top;</textarea></label>
+<label class="vm-field"><span>Backdrop CSS up to 768px</span><textarea class="vm-textarea vm-code" style="min-height:64px">background-position: 30% center;</textarea></label>
+<label class="vm-field"><span>UI opacity</span><span class="vm-range-row"><input type="range" class="vm-range" min="30" max="100" value="90">90</span></label>
+<button class="vm-btn vm-btn--primary">Save</button></section>
+<section class="vm-settings__section vm-settings__section--danger"><h2 class="vm-section-title">Delete account</h2>
+<p class="vm-help">Deletes your account and every board you own with all lists and tasks.</p>
+<button class="vm-btn vm-btn--danger">Delete account</button></section>
+</div></div>
+</body>
+</html>

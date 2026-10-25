@@ -31,7 +31,7 @@ weight without need here, this rule wins.
 - JS: `build/js/` -> `static/dist/` via esbuild; Alpine.js v3 for components, SortableJS for drag and drop
 - Build assets: `build/build-assets.sh` (Docker container, never run npm/yarn directly on host)
 - CSS theming: CSS custom properties (`--var`) only, never SCSS `$vars` for themeable values (breaks dark mode)
-- Accent: `#B7C4DE` in dark mode, a darker shade of it in light mode (`--accent`)
+- Accent: `#B7C4DE` in dark mode, `#4A5E86` in light mode (`--accent`)
 - Dev stack: `docker-compose up -d` (web at http://localhost:8080, MariaDB, Mailpit at http://localhost:8030)
 
 ## App layout (target)
@@ -45,7 +45,14 @@ api/               registry.py (operations), operations/ (handlers per concern),
 templates/partials/ _confirm_dialog.html, _emoji_picker.html, _inline_edit.html, _search.html
 build/             scss/, js/, build-assets.sh
 tests/             unit/, api/, e2e/
+docs/design-system/ tokens, UI rules, component references
 ```
+
+## Design system
+UI work follows `docs/design-system/`: read its `README.md` first.
+- Colours, type, spacing, radii, shadows and sizes come from `tokens.json`; use them as CSS custom properties of the same name, never raw values
+- Component markup and states: `components/<Name>/README.md` and `preview.html`; `components/bundle.css` is the reference for the `vm-` classes
+- The artifact named in its README is the source; change the design there and re-export, not in `docs/` alone
 
 ## Key conventions
 - **One operation layer**: every action is an `Operation` in `api/registry.py` with a handler in `api/operations/`. REST (`/api/v1/`), MCP (`/mcp`) and the frontend's JavaScript all go through it. Handlers validate and call `boards/services.py`; they hold no rules themselves. Pages are server-rendered from the same serializers.
