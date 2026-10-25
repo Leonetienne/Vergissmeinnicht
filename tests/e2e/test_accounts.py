@@ -9,6 +9,7 @@ from .conftest import BASE, PASSWORD, PAUSE, new_user
 
 def test_login_redirect_next_and_logout(ui):
     email = new_user()
+    ui.d.delete_all_cookies()
     ui.go("/settings/")
     assert ui.d.current_url == BASE + "/login?next=/settings/"
     ui.css("input[name=email]").send_keys(email.upper())

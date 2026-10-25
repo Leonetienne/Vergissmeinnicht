@@ -1,7 +1,7 @@
 <article class="vm-card" :id="'task-' + task.id" :data-task-id="task.id" tabindex="0" :aria-label="task.title"
          :data-colour="task.colour !== 'none' ? task.colour : null"
          :class="{ 'vm-card--done': task.state === 'done', 'vm-card--drag': editable, 'vm-card--highlight': highlighted === task.id }"
-         @click="cardClick(task)" @keydown.enter.self="openSingle(task)">
+         @click="openSingle(task)" @keydown.enter.self="openSingle(task)">
   {% if archive %}
   <template x-if="canEdit"><input type="checkbox" class="vm-check" aria-label="Select" :value="task.id" x-model.number="selected" @click.stop></template>
   <template x-if="!canEdit"><span></span></template>
@@ -10,7 +10,9 @@
          @click.stop @change="toggle(task, $event.target)">
   {% endif %}
   <div class="vm-card__body">
-    <span class="vm-card__title" x-text="task.title"></span>
+    <span class="vm-card__title">
+      {% include "partials/_inline_edit.html" with get="() => task.title" set="v => updateTask(task, { title: v })" label="task title" editable="editable" maxlength=200 %}
+    </span>
     <span class="vm-due" :class="dueClass(task)" x-show="task.due_date" x-text="formatDate(task.due_date)"></span>
     <span class="vm-card__note" x-show="task.note" x-text="task.note"></span>
   </div>

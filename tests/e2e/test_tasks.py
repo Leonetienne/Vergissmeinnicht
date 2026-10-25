@@ -248,3 +248,28 @@ def test_archive_looks_like_board(ui, owner):
     ui.click(ui.xpath("//a[normalize-space()='Open archive']"))
     assert ui.titles("Later") == ["Old"]
     assert not ui.all("input[aria-label='New task']") and not ui.all("button[aria-label='Delete list']")
+
+
+def test_card_title_inline_edit_and_drag_from_any_surface(ui, owner):
+    ui.create_board("Surfaces")
+    for title in ["First", "Second", "Third"]:
+        ui.add_task(title)
+    ui.click(ui.css(".vm-card__title .vm-inline", ui.card("Second")))
+    assert not ui.all("[role=dialog][aria-label=Task]") or not ui.css("[role=dialog][aria-label=Task]").is_displayed()
+    field = ui.d.switch_to.active_element
+    assert field.get_attribute("aria-label") == "task title"
+    field.send_keys(Keys.CONTROL, "a")
+    ui.type(field, "Renamed" + Keys.ENTER)
+    assert ui.titles() == ["First", "Renamed", "Third"]
+
+    ui.drag(ui.css(".vm-card__title .vm-inline", ui.card("Third")), ui.card("First"), dy=2)
+    assert ui.titles() == ["Third", "First", "Renamed"]
+    assert ui.d.switch_to.active_element.get_attribute("aria-label") != "task title"
+
+    ui.drag(ui.css(".vm-check", ui.card("Renamed")), ui.card("Third"), dy=2)
+    assert ui.titles() == ["Renamed", "Third", "First"]
+    assert "vm-card--done" not in ui.card("Renamed").get_attribute("class")
+    assert not ui.css("[role=dialog][aria-label=Task]").is_displayed() if ui.all("[role=dialog][aria-label=Task]") else True
+    ui.d.refresh()
+    time.sleep(PAUSE)
+    assert ui.titles() == ["Renamed", "Third", "First"]

@@ -1,6 +1,6 @@
 import Alpine from "alpinejs";
 import { op } from "./api";
-import { byPosition, makeSortable, mergeById, newTempId, page, recentlyDragged } from "./page";
+import { byPosition, makeSortable, mergeById, newTempId, page } from "./page";
 import { dueClass, failToast, formatDate, highlightAnchor, readJSON } from "./ui";
 import { remap, rid } from "./undo";
 
@@ -374,9 +374,6 @@ Alpine.data("boardPage", (archive = false) => ({
   },
 
   // Singleview
-  cardClick(task) {
-    if (!recentlyDragged()) this.openSingle(task);
-  },
   openSingle(task) {
     this.single = task;
     this.noteDraft = task.note;

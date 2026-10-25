@@ -50,8 +50,13 @@ export const newTempId = (prefix) => `${prefix}${++tempId}`;
 
 let lastDragEnd = 0;
 
-// True right after a drag, so the click that ends it does not count as a tap.
-export const recentlyDragged = () => Date.now() - lastDragEnd < 300;
+// The click that ends a drag is no tap: it must not toggle, delete, rename, open or follow a link.
+document.addEventListener("click", (event) => {
+  if (Date.now() - lastDragEnd < 300) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+}, true);
 
 /**
  * SortableJS in pointer fallback mode (same on mouse and touch), with Alpine keeping the DOM.
@@ -71,7 +76,7 @@ export function makeSortable(el, { onDrop, onOutside, dropZone, ...options }) {
     fallbackTolerance: 4,
     delay: 200,
     delayOnTouchOnly: true,
-    filter: "button, input",
+    filter: "input:not([type=checkbox]), textarea, select",
     preventOnFilter: false,
     onStart(event) {
       event.item._vmNext = event.item.nextSibling;

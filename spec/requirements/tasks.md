@@ -144,10 +144,18 @@ Covers:
 
 ## Editing and moving
 
-### Reorder and move
-`req~tasks.drag~2`
+### Title edit on the card
+`req~tasks.title-edit~1`
 
-When an editor or the owner drags an open or done task to another position in its list or into another list, the system shall store its new list and position, keeping its state and placing it among the tasks of that state.
+When an editor or the owner clicks or taps a task title on its card, the system shall edit the title inline; a click that ends a drag shall change nothing.
+
+Covers:
+- `feat~tasks~1`
+
+### Reorder and move
+`req~tasks.drag~3`
+
+When an editor or the owner drags an open or done task, starting anywhere on its card, to another position in its list or into another list, the system shall store its new list and position, keeping its state and placing it among the tasks of that state.
 
 Covers:
 - `feat~tasks~1`
@@ -171,9 +179,9 @@ Covers:
 Tags: UI
 
 ### Singleview
-`req~tasks.singleview~2`
+`req~tasks.singleview~3`
 
-When a member clicks or taps a task card outside its checkbox and delete button, the system shall open a small popup with the title, due date (with clear), colour circles, the note as textarea and a "Json export" link; a drag shall move the card without opening it; for editors and the owner every change shall be saved immediately, for observers and on the archive page all fields shall be read-only.
+When a member clicks or taps a task card outside its title, checkbox and delete button, the system shall open a small popup with the title, due date (with clear), colour circles, the note as textarea and a "Json export" link; a drag shall move the card without opening it; for editors and the owner every change shall be saved immediately, for observers and on the archive page all fields shall be read-only.
 
 Covers:
 - `feat~tasks~1`

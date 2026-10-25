@@ -1,6 +1,6 @@
 import Alpine from "alpinejs";
 import { op } from "./api";
-import { makeSortable, mergeById, newTempId, page, recentlyDragged } from "./page";
+import { makeSortable, mergeById, newTempId, page } from "./page";
 import { failToast, readJSON } from "./ui";
 import { remap, rid } from "./undo";
 
@@ -21,11 +21,6 @@ Alpine.data("boardList", () => {
         },
       });
     },
-    // The card is one big link; the click that ends a drag must not open the board.
-    openGuard(event) {
-      if (recentlyDragged()) event.preventDefault();
-    },
-
     async reload() {
       try {
         const fresh = await op("boards_list");

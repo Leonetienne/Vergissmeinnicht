@@ -7,5 +7,5 @@
   </template>
   <input class="vm-inline-input" x-show="editing" x-cloak x-ref="input" x-model="draft" aria-label="{{ label }}"
          maxlength="{{ maxlength|default:100 }}" :size="Math.max(draft.length, 4)"
-         @click.stop.prevent @keydown.enter.prevent="commit()" @keydown.escape.prevent.stop="cancel()" @blur="commit()">
+         @click.stop @keydown.enter.prevent="commit()" @keydown.escape.prevent.stop="cancel()" @blur="commit()">
 </span>

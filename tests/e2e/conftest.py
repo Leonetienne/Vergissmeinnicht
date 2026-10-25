@@ -119,7 +119,9 @@ class UI:
         return self.xpath(f"//article[contains(@class,'vm-card')][.//*[normalize-space()='{title}']]")
 
     def open_card(self, title):
-        self.click(self.css(".vm-card__title", self.card(title)))
+        """Click the card body right of the title, which opens the singleview."""
+        ActionChains(self.d).move_to_element_with_offset(self.card(title), 70, 0).click().perform()
+        time.sleep(PAUSE)
 
     def titles(self, list_title=None):
         return [c.text.split("\n")[0] for c in self.all(".vm-card", self.list_section(list_title))]

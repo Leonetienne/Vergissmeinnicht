@@ -5,7 +5,7 @@
   <div class="vm-boards" style="width:100%" x-ref="own">
     <template x-for="board in own" :key="board.id">
       <div class="vm-board-entry" :data-board-id="board.id">
-        <a class="vm-board-entry__link" :href="board.url" draggable="false" :aria-label="'Open ' + board.name" @click="openGuard($event)"></a>
+        <a class="vm-board-entry__link" :href="board.url" draggable="false" :aria-label="'Open ' + board.name"></a>
         {% include "partials/_emoji_picker.html" with get="() => board.emoji" set="e => setEmoji(board, e)" editable="true" %}
         <span class="vm-board-entry__name">
           {% include "partials/_inline_edit.html" with get="() => board.name" set="v => rename(board, v)" label="board name" editable="true" %}

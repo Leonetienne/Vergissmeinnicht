@@ -17,7 +17,7 @@
 | Archive | The page of a board listing its archived tasks. |
 | Card | The visual representation of a task inside a list. |
 | Singleview | The small popup with all editable details of one task, opened by clicking or tapping its card. |
-| Inline edit | Editing a board name or list title in place: plain text until clicked, then an input field. |
+| Inline edit | Editing a board name, list title or task title in place: plain text until clicked, then an input field. |
 | Confirm dialog | The shared in-page OK/Cancel modal used before destructive actions. |
 | Operation | One action of the central operation layer, used by the frontend, the REST API and the MCP server. |
 | Serializer | The single JSON representation of a board, list or task, used by the API, the MCP server and the JSON export. |
