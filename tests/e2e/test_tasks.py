@@ -142,12 +142,20 @@ def test_archive_flow(ui, owner):
     ui.click(ui.css(".vm-check", ui.card("Done one")))
     ui.click(ui.css(".vm-check", ui.card("Done two")))
     ui.click(ui.button("Archive what's done"))
+    ui.confirm(ok=False)
+    assert sorted(ui.titles()) == ["Done one", "Done two", "Open one"]
+    ui.click(ui.button("Archive what's done"))
+    ui.confirm()
     assert ui.titles() == ["Open one"]
     ui.click(ui.xpath("//a[normalize-space()='Open archive']"))
     assert ui.d.current_url.endswith("/archive/")
     assert sorted(c.text.split("\n")[0] for c in ui.all(".vm-card")) == ["Done one", "Done two"]
     ui.click(ui.css(".vm-check", ui.card("Done one")))
     ui.click(ui.button("Unarchive selected"))
+    ui.confirm(ok=False)
+    assert sorted(c.text.split("\n")[0] for c in ui.all(".vm-card")) == ["Done one", "Done two"]
+    ui.click(ui.button("Unarchive selected"))
+    ui.confirm()
     assert [c.text.split("\n")[0] for c in ui.all(".vm-card")] == ["Done two"]
     ui.click(ui.xpath("//a[normalize-space()='Leave archive']"))
     assert sorted(ui.titles()) == ["Done one", "Open one"]
@@ -208,6 +216,15 @@ def test_leftmost_card_ring_fits_inside_board(ui, owner):
     title = ui.css(".vm-page-title").rect
     assert card["x"] - board["x"] >= 4
     assert card["x"] == title["x"]
+
+
+def test_exports_hidden_without_tasks(ui, owner):
+    ui.create_board("Empty export board")
+    shown = lambda: [a for a in ui.all("a") if a.text == "Json export"]
+    assert shown() == []
+    ui.add_task("First")
+    time.sleep(PAUSE)
+    assert len(shown()) == 2
 
 
 def test_exports(ui, owner):
@@ -281,6 +298,7 @@ def test_archive_looks_like_board(ui, owner):
     ui.add_task("Old", "Later")
     ui.click(ui.css(".vm-check", ui.card("Old")))
     ui.click(ui.button("Archive what's done"))
+    ui.confirm()
     ui.click(ui.xpath("//a[normalize-space()='Open archive']"))
     assert ui.titles("Later") == ["Old"]
     assert not ui.all("input[aria-label='New task']") and not ui.all("button[aria-label='Delete list']")

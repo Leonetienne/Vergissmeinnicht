@@ -1,9 +1,9 @@
 # Archive
 
 ### Archive what's done
-`req~archive.archive-done~1`
+`req~archive.archive-done~2`
 
-When an editor or the owner clicks "Archive what's done" on the board page, the system shall set every done task of the board to `archived` and remove them from the board view.
+When an editor or the owner clicks "Archive what's done" on the board page and confirms the OK/Cancel dialog, the system shall set every done task of the board to `archived` and remove them from the board view.
 
 Covers:
 - `feat~archive~1`
@@ -35,9 +35,9 @@ Covers:
 - `feat~archive~1`
 
 ### Unarchive selected
-`req~archive.unarchive~1`
+`req~archive.unarchive~2`
 
-When an editor or the owner clicks "Unarchive selected", the system shall set every selected task to `done` and remove it from the archive page.
+When an editor or the owner clicks "Unarchive selected" and confirms the OK/Cancel dialog, the system shall set every selected task to `done` and remove it from the archive page.
 
 Covers:
 - `feat~archive~1`

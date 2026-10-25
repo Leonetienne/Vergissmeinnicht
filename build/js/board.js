@@ -140,7 +140,8 @@ Alpine.data("boardPage", (archive = false) => ({
       failToast(error);
     }
   },
-  archiveDone() {
+  async archiveDone() {
+    if (!(await window.confirmDialog("Archive all done tasks?"))) return;
     const done = this.board.lists.flatMap((l) => l.tasks.filter((t) => t.state === "done"));
     this.perform(
       () => done.forEach((t) => (t.state = "archived")),
@@ -152,9 +153,10 @@ Alpine.data("boardPage", (archive = false) => ({
       },
     );
   },
-  unarchive() {
+  async unarchive() {
     const ids = [...this.selected];
     if (!ids.length) return;
+    if (!(await window.confirmDialog(`Unarchive ${ids.length} selected task${ids.length === 1 ? "" : "s"}?`))) return;
     this.perform(
       () => {
         this.board.lists.forEach((l) => l.tasks.forEach((t) => ids.includes(t.id) && (t.state = "done")));
