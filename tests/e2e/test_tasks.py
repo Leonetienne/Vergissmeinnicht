@@ -174,6 +174,32 @@ def test_search_popup(ui, owner):
     assert "vm-card--highlight" in ui.card("Renew passport").get_attribute("class")
 
 
+def test_anchor_change_on_open_board_highlights_task(ui, owner):
+    ui.create_board("Anchors")
+    for title in ["First", "Second"]:
+        ui.add_task(title)
+    second = ui.card("Second")
+    assert "vm-card--highlight" not in second.get_attribute("class")
+    ui.d.execute_script("location.hash = arguments[0]", second.get_attribute("id"))
+    time.sleep(PAUSE)
+    assert "vm-card--highlight" in second.get_attribute("class")
+    assert "vm-card--highlight" not in ui.card("First").get_attribute("class")
+    time.sleep(3)
+    assert "vm-card--highlight" not in second.get_attribute("class")
+
+
+def test_anchored_task_lands_below_header(ui, owner):
+    ui.create_board("Long board")
+    for i in range(40):
+        ui.add_task(f"Task {i}")
+    card = ui.card("Task 10")
+    ui.d.execute_script("arguments[0].scrollIntoView({ block: 'start' })", card)
+    time.sleep(PAUSE)
+    assert ui.d.execute_script("return window.scrollY") > 0
+    top = ui.d.execute_script("return arguments[0].getBoundingClientRect().top", card)
+    assert top >= ui.css(".vm-header").rect["height"]
+
+
 def test_exports(ui, owner):
     ui.create_board("Export board")
     ui.add_task("Exported")

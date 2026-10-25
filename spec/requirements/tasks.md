@@ -19,9 +19,9 @@ Covers:
 - `feat~tasks~1`
 
 ### Task anchor
-`req~tasks.anchor~1`
+`req~tasks.anchor~2`
 
-Every task card shall carry the HTML id `task-<id>`; when a board or archive page is opened with that anchor, the system shall scroll to the task and highlight it briefly.
+Every task card shall carry the HTML id `task-<id>`; when a board or archive page is opened with that anchor or the anchor changes on an open page, the system shall scroll to the task and let it glow for about two seconds.
 
 Covers:
 - `feat~tasks~1`

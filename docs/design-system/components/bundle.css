@@ -47,7 +47,14 @@
 .vm-card__note { font: 400 13px/18px var(--font-sans); color: var(--ink-muted); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-line; }
 .vm-card__actions { display: flex; gap: 2px; margin: -2px -6px 0 0; }
 .vm-card--done .vm-card__title { color: var(--ink-muted); text-decoration: line-through; }
-.vm-card--highlight { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.vm-card--highlight { animation: vm-glow 2.4s ease-out; }
+@keyframes vm-glow {
+  0%, 50% { box-shadow: 0 0 0 2px var(--focus-ring), 0 0 18px 4px color-mix(in srgb, var(--accent) 55%, transparent); }
+  100% { box-shadow: var(--shadow-card); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vm-card--highlight { animation: none; outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+}
 .vm-card[data-colour="red"] { background: var(--task-red-tint); }
 .vm-card[data-colour="orange"] { background: var(--task-orange-tint); }
 .vm-card[data-colour="yellow"] { background: var(--task-yellow-tint); }

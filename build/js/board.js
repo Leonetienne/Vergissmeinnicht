@@ -40,6 +40,7 @@ Alpine.data("boardPage", (archive = false) => ({
   init() {
     this.initPage();
     highlightAnchor(this);
+    window.addEventListener("hashchange", () => highlightAnchor(this));
     this.$nextTick(() => this.initListSort());
   },
 

@@ -74,20 +74,25 @@ export function dueClass(task) {
   return "";
 }
 
-// Scrolls to #task-<id> and returns the id for a brief highlight.
+// Task id from a #task-<id> hash.
 export function anchoredTask() {
   const match = location.hash.match(/^#task-(\d+)$/);
   return match ? Number(match[1]) : null;
 }
 
+// Matches the vm-glow animation length.
+const HIGHLIGHT_MS = 2400;
+
 export function highlightAnchor(component) {
   const id = anchoredTask();
   if (!id) return;
-  component.highlighted = id;
+  clearTimeout(component.highlightTimer);
+  component.highlighted = null;
   component.$nextTick(() => {
+    component.highlighted = id;
     const el = document.getElementById("task-" + id);
     if (el) el.scrollIntoView({ block: "center" });
-    setTimeout(() => (component.highlighted = null), 2000);
+    component.highlightTimer = setTimeout(() => (component.highlighted = null), HIGHLIGHT_MS);
   });
 }
 
