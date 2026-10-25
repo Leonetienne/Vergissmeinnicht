@@ -3,6 +3,16 @@
 A small, self-hosted to-do app. Tasks live on boards, optionally split into Kanban-like
 lists, and boards can be shared with other users as observer (read-only) or editor.
 
+![image](https://raw.githubusercontent.com/Leonetienne/Vergnissmeinnicht/refs/heads/master/github-assets/theme-turquoise-dark.png)
+
+*Colour themes and light or dark mode, switchable in the header.*
+
+| Turquoise, light | OLED, dark |
+|---|---|
+| ![image](https://raw.githubusercontent.com/Leonetienne/Vergnissmeinnicht/refs/heads/master/github-assets/theme-turquoise-light.png) | ![image](https://raw.githubusercontent.com/Leonetienne/Vergnissmeinnicht/refs/heads/master/github-assets/theme-oled-dark.png) |
+| **Bubblegum, light** | **Bubblegum, dark** |
+| ![image](https://raw.githubusercontent.com/Leonetienne/Vergnissmeinnicht/refs/heads/master/github-assets/theme-bubblegum-light.png) | ![image](https://raw.githubusercontent.com/Leonetienne/Vergnissmeinnicht/refs/heads/master/github-assets/theme-bubblegum-dark.png) |
+
 ## Features
 
 - Boards with emoji icons, Kanban-like lists and drag and drop for boards, lists and tasks
