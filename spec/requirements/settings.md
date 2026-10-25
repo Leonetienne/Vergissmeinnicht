@@ -78,6 +78,16 @@ Tags: Security
 
 ## Appearance
 
+### Key endpoints
+`req~settings.keys.endpoints~1`
+
+The API key section shall show the REST base URL with a copy button and a link to the REST reference; the MCP key section shall show the MCP endpoint URL with a copy button; both URLs shall start with `SITE_URL`.
+
+Covers:
+- `feat~settings~1`
+
+Tags: UI
+
 ### Backdrop upload
 `req~settings.backdrop.upload~1`
 

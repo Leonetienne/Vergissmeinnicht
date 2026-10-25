@@ -95,3 +95,11 @@ Covers:
 
 Covers:
 - `feat~api~1`
+
+### Reference page
+`req~api.docs~1`
+
+The system shall serve a human-readable reference at `/api/v1/docs/`, generated from the operations, listing for each operation its method, path, description and parameters with location (path, query or body), type, whether required and allowed values.
+
+Covers:
+- `feat~api~1`

@@ -6,6 +6,10 @@
     <code class="vm-code" style="flex:1" data-new-key>{{ new_key.value }}</code>
     <button type="button" class="vm-btn vm-btn--sm" @click="copy('{{ new_key.value }}')">Copy</button></div></div>
   {% endif %}
+  <div class="vm-field"><span>{{ endpoint_label }}</span><div class="vm-row">
+    <code class="vm-code" style="flex:1" data-endpoint>{{ endpoint }}</code>
+    <button type="button" class="vm-btn vm-btn--sm" @click="copy('{{ endpoint }}')">Copy</button></div></div>
+  {% if docs %}<a class="vm-link vm-link--meta" href="{{ docs }}">Endpoint reference</a>{% endif %}
   <div class="vm-row">
     <form method="post" class="vm-inline-form">{% csrf_token %}<input type="hidden" name="action" value="{{ kind }}_generate"><button class="vm-btn">Generate</button></form>
     {% if key %}<form method="post" class="vm-inline-form">{% csrf_token %}<input type="hidden" name="action" value="{{ kind }}_revoke"><button class="vm-btn">Revoke</button></form>{% endif %}

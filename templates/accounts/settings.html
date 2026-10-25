@@ -65,8 +65,8 @@
     {% endif %}
   </section>
 
-  {% include "accounts/_key_section.html" with kind="api" label="API key" key=keys.api %}
-  {% include "accounts/_key_section.html" with kind="mcp" label="MCP key" key=keys.mcp %}
+  {% include "accounts/_key_section.html" with kind="api" label="API key" key=keys.api endpoint=api_base endpoint_label="Base URL" docs="/api/v1/docs/" %}
+  {% include "accounts/_key_section.html" with kind="mcp" label="MCP key" key=keys.mcp endpoint=mcp_endpoint endpoint_label="Endpoint" %}
 
   <section class="vm-settings__section" id="appearance"><h2 class="vm-section-title">Appearance</h2>
     <form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="appearance">

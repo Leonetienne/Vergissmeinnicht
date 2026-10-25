@@ -1,7 +1,9 @@
 import json
 from collections import defaultdict
 
+from django.conf import settings
 from django.http import JsonResponse
+from django.shortcuts import render
 from django.middleware.csrf import CsrfViewMiddleware
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
@@ -75,6 +77,38 @@ def index(request):
             for op in REGISTRY.values()
         ]
     })
+
+
+def _type_label(schema):
+    types = schema.get("type")
+    label = " or ".join(types) if isinstance(types, list) else types
+    if label == "array":
+        items = schema["items"]
+        inner = "{" + ", ".join(items["properties"]) + "}" if items.get("type") == "object" else _type_label(items)
+        label = f"list of {inner}"
+    if schema.get("format") == "date":
+        label += " (YYYY-MM-DD)"
+    return label
+
+
+def docs(request):
+    """Human-readable reference of every operation, built from the registry."""
+    operations = []
+    for op in REGISTRY.values():
+        path_params = set(op.path_params())
+        params = [
+            {
+                "name": name,
+                "type": _type_label(schema),
+                "required": name in op.required,
+                "where": "path" if name in path_params else "query" if op.method in ("GET", "DELETE") else "body",
+                "values": ", ".join(schema["enum"]) if "enum" in schema else "",
+                "description": schema.get("description", ""),
+            }
+            for name, schema in op.params.items()
+        ]
+        operations.append({"op": op, "path": "/api/v1/" + op.path, "params": params})
+    return render(request, "api/docs.html", {"operations": operations, "api_base": settings.SITE_URL + "/api/v1/"})
 
 
 def _django_path(op_path):

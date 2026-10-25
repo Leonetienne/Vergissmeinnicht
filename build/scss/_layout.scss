@@ -92,3 +92,16 @@ button { font-family: inherit; }
 
 .vm-combobox { position: relative; }
 .vm-combobox__options { margin-top: var(--space-1); }
+
+.vm-docs__toc { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font: 400 13px/18px var(--font-mono); }
+.vm-docs__table { overflow-x: auto; }
+.vm-docs__table table { width: 100%; border-collapse: collapse; font: 400 13px/18px var(--font-sans); }
+.vm-docs__table th { text-align: left; font-weight: 500; color: var(--ink-muted); }
+.vm-docs__table th, .vm-docs__table td { padding: var(--space-1) var(--space-2) var(--space-1) 0; border-bottom: 1px solid var(--border); vertical-align: top; }
+.vm-docs__table code { font: 400 13px/18px var(--font-mono); }
+.vm-docs section { scroll-margin-top: 64px; }
+.vm-docs__table table { table-layout: fixed; min-width: 520px; }
+.vm-docs__table th:nth-child(1) { width: 24%; }
+.vm-docs__table th:nth-child(2) { width: 10%; }
+.vm-docs__table th:nth-child(3) { width: 22%; }
+.vm-docs__table th:nth-child(4) { width: 12%; }

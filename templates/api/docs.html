@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}REST API · Vergissmeinnicht{% endblock %}
+{% block content %}
+<div class="vm-settings vm-docs">
+  <h1 class="vm-auth__app">REST API</h1>
+  <section class="vm-settings__section">
+    <p class="vm-help">Base URL</p>
+    <code class="vm-code">{{ api_base }}</code>
+    <p class="vm-help">Authenticate with the API key from Settings: <code class="vm-code">Authorization: Bearer vmk_…</code>.
+      GET and DELETE take parameters in the query string, POST and PATCH as a JSON body.
+      Errors answer 400, 401, 403, 404 or 409 with <code class="vm-code">{"error": "…"}</code>.
+      <a class="vm-link" href="/api/v1/">Machine-readable index</a></p>
+  </section>
+  <nav class="vm-settings__section" aria-label="Operations">
+    <h2 class="vm-section-title">Operations</h2>
+    <ul class="vm-docs__toc">{% for item in operations %}<li><a class="vm-link" href="#{{ item.op.name }}">{{ item.op.name }}</a></li>{% endfor %}</ul>
+  </nav>
+  {% for item in operations %}
+  <section class="vm-settings__section" id="{{ item.op.name }}">
+    <h2 class="vm-section-title">{{ item.op.name }}{% if item.op.destructive %} <span class="vm-tag">destructive</span>{% endif %}</h2>
+    <code class="vm-code">{{ item.op.method }} {{ item.path }}</code>
+    <p class="vm-help">{{ item.op.description }}</p>
+    {% if item.params %}
+    <div class="vm-docs__table"><table>
+      <thead><tr><th>Parameter</th><th>In</th><th>Type</th><th>Required</th><th>Notes</th></tr></thead>
+      <tbody>{% for p in item.params %}
+        <tr><td><code>{{ p.name }}</code></td><td>{{ p.where }}</td><td>{{ p.type }}</td><td>{{ p.required|yesno:"yes,no" }}</td>
+          <td>{% if p.values %}{{ p.values }}{% if p.description %}; {% endif %}{% endif %}{{ p.description }}</td></tr>
+      {% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

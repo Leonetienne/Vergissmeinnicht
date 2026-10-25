@@ -177,6 +177,21 @@ class TestSettings:
         owner.refresh_from_db()
         assert owner.reminders_enabled is False
 
+    def test_key_sections_show_endpoints(self, client, owner, settings):
+        settings.SITE_URL = "https://todo.example.org"
+        client.force_login(owner)
+        content = client.get("/settings/").content.decode()
+        assert "https://todo.example.org/api/v1/" in content and "https://todo.example.org/mcp" in content
+        assert 'href="/api/v1/docs/"' in content
+
+    def test_api_reference_lists_every_operation(self, client, db):
+        from api.registry import REGISTRY
+
+        content = client.get("/api/v1/docs/").content.decode()
+        for op in REGISTRY.values():
+            assert f'id="{op.name}"' in content and f"{op.method} /api/v1/{op.path}" in content
+        assert "list of {task_id, list_id, position}" in content and "open, done, archived" in content
+
     def test_key_shown_once(self, client, owner):
         client.force_login(owner)
         response = client.post("/settings/", {"action": "api_generate"})

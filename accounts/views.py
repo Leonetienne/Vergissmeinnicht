@@ -112,6 +112,8 @@ def settings_view(request):
     if context["totp_secret"]:
         context["totp_qr"] = acc.qr_svg(acc.totp_uri(user, context["totp_secret"]))
     context["keys"] = _key_status(user)
+    context["api_base"] = settings.SITE_URL + "/api/v1/"
+    context["mcp_endpoint"] = settings.SITE_URL + "/mcp"
     context["appearance"] = {
         "css": user.backdrop_css,
         "cssMobile": user.backdrop_css_mobile,
