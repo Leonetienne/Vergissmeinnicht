@@ -341,3 +341,20 @@ def test_misconfiguration_refuses_start():
 
 def test_make_user_helper(db):
     assert make_user("z@example.org").display_name == "z"
+
+
+class TestErrorPages:
+    def test_not_found(self, client, people, settings):
+        settings.DEBUG = False
+        login(client)
+        response = client.get("/no-such-page/")
+        assert response.status_code == 404
+        assert b"Page not found" in response.content and b'href="/">Go home' in response.content
+        assert b"Leon's Home" in response.content
+
+    def test_server_error(self, client, settings):
+        from vergissmeinnicht.urls import server_error
+        settings.APP_VERSION = "9.9.9"
+        response = server_error(None)
+        assert response.status_code == 500
+        assert b"Server error" in response.content and b"9.9.9" in response.content

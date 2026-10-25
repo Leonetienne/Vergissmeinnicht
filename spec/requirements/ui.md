@@ -103,3 +103,11 @@ UI labels shall be short, buttons verbs, and status and error messages shall sta
 
 Covers:
 - `feat~ui~1`
+
+### Error pages
+`req~ui.error-pages~1`
+
+When a page request fails with status 400, 403, 404 or 500, the system shall show a page in the app's design with the status code, a short title, one line of explanation and a "Go home" link to the board list.
+
+Covers:
+- `feat~ui~1`

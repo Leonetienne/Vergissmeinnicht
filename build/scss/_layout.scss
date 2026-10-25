@@ -65,6 +65,10 @@ button { font-family: inherit; }
 .vm-card.sortable-ghost, .vm-list.sortable-ghost { opacity: 0.4; }
 .vm-card.sortable-drag { box-shadow: var(--shadow-pop); }
 .vm-check:disabled { cursor: default; }
+.vm-status { display: grid; justify-items: center; gap: var(--space-3); max-width: 360px; margin: var(--space-8) auto; padding: var(--space-6); text-align: center; background: var(--surface-ui); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); }
+.vm-status__code { margin: 0; font: 600 64px/1 var(--font-sans); color: var(--accent); letter-spacing: -0.02em; }
+.vm-status__title { margin: 0; font: 600 24px/30px var(--font-sans); }
+.vm-status__text { margin: 0 0 var(--space-2); font: 400 15px/22px var(--font-sans); color: var(--ink-muted); }
 .vm-empty { color: var(--ink-muted); font: 400 13px/18px var(--font-sans); margin: 0; }
 
 .vm-boards { display: grid; gap: var(--space-2); max-width: 640px; margin: 0 auto; }

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ code }} {{ heading }} · Vergissmeinnicht{% endblock %}
+{% block content %}
+<section class="vm-status" aria-labelledby="vm-status-title">
+  <p class="vm-status__code">{{ code }}</p>
+  <h1 class="vm-status__title" id="vm-status-title">{{ heading }}</h1>
+  <p class="vm-status__text">{{ text }}</p>
+  <a class="vm-btn vm-btn--primary" href="/">Go home</a>
+</section>
+{% endblock %}

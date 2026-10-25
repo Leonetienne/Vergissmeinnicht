@@ -8,13 +8,13 @@
     {% if archive %}<span class="vm-tag">Archive</span>{% endif %}
     <div class="vm-page-title__actions">
       {% if archive %}
-      <a class="vm-btn" :href="board.url" style="text-decoration:none">Leave archive</a>
+      <a class="vm-btn" :href="board.url">Leave archive</a>
       <template x-if="canEdit">
         <button type="button" class="vm-btn vm-btn--primary" :disabled="!selected.length" @click="unarchive()">Unarchive selected</button>
       </template>
       {% else %}
       <template x-if="canEdit"><button type="button" class="vm-btn" @click="archiveDone()">Archive what's done</button></template>
-      <a class="vm-btn" :href="board.url + 'archive/'" style="text-decoration:none">Open archive</a>
+      <a class="vm-btn" :href="board.url + 'archive/'">Open archive</a>
       <template x-if="isOwner"><button type="button" class="vm-btn vm-btn--primary" @click="openShare()">Share</button></template>
       <template x-if="!isOwner"><button type="button" class="vm-btn" @click="leaveBoard()">Leave board</button></template>
       <template x-if="isOwner">
