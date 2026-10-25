@@ -115,6 +115,18 @@ class TestMcp:
         result = self.rpc(client, key, "tools/call", {"name": "drop_tables", "arguments": {}}).json()["result"]
         assert result["isError"] is True
 
+    def test_every_result_is_structured(self, client, people, board, default_list):
+        key = Key.generate(people[0], Key.MCP)
+        task = s.create_task(people[0], default_list.id, "A")
+        calls = [("shares_list", {"board_id": board.id}),
+                 ("tasks_move", {"moves": [{"task_id": task.id, "list_id": default_list.id, "position": 0}]}),
+                 ("profile_get", {})]
+        for name, args in calls:
+            result = self.rpc(client, key, "tools/call", {"name": name, "arguments": args}).json()["result"]
+            structured = result["structuredContent"]
+            assert isinstance(structured, dict)
+            assert structured == json.loads(result["content"][0]["text"]) or structured["items"] == json.loads(result["content"][0]["text"])
+
     def test_parse_error(self, client, people):
         key = Key.generate(people[0], Key.MCP)
         response = client.post("/mcp", "{", content_type="application/json", HTTP_AUTHORIZATION=f"Bearer {key}")

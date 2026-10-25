@@ -42,6 +42,14 @@ The MCP server shall send short instructions describing boards, lists, task stat
 Covers:
 - `feat~mcp~1`
 
+### Structured results
+`req~mcp.structured~1`
+
+The MCP server shall return every successful tool result both as JSON text and as `structuredContent`; a result that is a list shall be wrapped as `{"items": [...]}`.
+
+Covers:
+- `feat~mcp~1`
+
 ### Tool errors
 `req~mcp.errors~1`
 

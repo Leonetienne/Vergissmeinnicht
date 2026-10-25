@@ -40,10 +40,9 @@ def _call_tool(user, params):
         result = call(name, user, params.get("arguments") or {})
     except OpError as e:
         return {"content": [{"type": "text", "text": e.message}], "isError": True}
-    response = {"content": [{"type": "text", "text": json.dumps(result)}]}
-    if isinstance(result, dict):
-        response["structuredContent"] = result
-    return response
+    # structuredContent has to be an object, so list results arrive as {"items": [...]}.
+    structured = result if isinstance(result, dict) else {"items": result}
+    return {"content": [{"type": "text", "text": json.dumps(result)}], "structuredContent": structured}
 
 
 def _handle(user, message):
