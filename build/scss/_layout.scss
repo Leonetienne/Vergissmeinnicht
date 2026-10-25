@@ -114,6 +114,8 @@ html { scroll-padding-top: 64px; }
 .vm-combobox { position: relative; }
 .vm-combobox__options { margin-top: var(--space-1); }
 
+@media (min-width: 1024px) { .vm-docs { max-width: 880px; } }
+@media (min-width: 1440px) { .vm-docs { max-width: 1120px; } }
 .vm-docs__toc { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); font: 400 13px/18px var(--font-mono); }
 .vm-docs__table { overflow-x: auto; }
 .vm-docs__table table { width: 100%; border-collapse: collapse; font: 400 13px/18px var(--font-sans); }
