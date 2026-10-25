@@ -59,12 +59,12 @@
             {% include "boards/_task_card.html" %}
           </template>
         </div>
-        <a class="vm-link vm-link--meta vm-list__export" :href="'/export/list/' + list.id + '.json'">Json export</a>
+        <a class="vm-link vm-link--meta vm-list__export" x-show="visibleTasks(list).length" :href="'/export/list/' + list.id + '.json'">Json export</a>
       </section>
     </template>
   </div>
   {% if archive %}<p class="vm-empty" x-show="!anyVisible">Nothing archived.</p>{% endif %}
-  <div class="vm-page-export"><a class="vm-link vm-link--meta" href="/export/board/{{ board.id }}.json">Json export</a></div>
+  <div class="vm-page-export" x-show="anyVisible"><a class="vm-link vm-link--meta" href="/export/board/{{ board.id }}.json">Json export</a></div>
 
   <div class="vm-scrim vm-overlay" x-show="single" x-cloak @click.self="closeSingle()" @keydown.escape.window="single && closeSingle()">
     <template x-if="single">
