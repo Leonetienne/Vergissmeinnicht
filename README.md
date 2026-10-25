@@ -13,6 +13,10 @@ lists, and boards can be shared with other users as observer (read-only) or edit
 | **Bubblegum, light** | **Bubblegum, dark** |
 | ![image](https://raw.githubusercontent.com/Leonetienne/vergissmeinnicht/refs/heads/master/github-assets/theme-bubblegum-light.png) | ![image](https://raw.githubusercontent.com/Leonetienne/vergissmeinnicht/refs/heads/master/github-assets/theme-bubblegum-dark.png) |
 
+*Board overview.*
+
+![image](https://raw.githubusercontent.com/Leonetienne/vergissmeinnicht/refs/heads/master/github-assets/home-bubblegum-light.png)
+
 ## Features
 
 - Boards with emoji icons, Kanban-like lists and drag and drop for boards, lists and tasks
