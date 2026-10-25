@@ -161,9 +161,9 @@ Covers:
 - `feat~tasks~1`
 
 ### Touch drag
-`req~tasks.drag-touch~1`
+`req~tasks.drag-touch~2`
 
-Dragging tasks and lists shall work with touch input.
+Dragging tasks, lists and boards shall work with touch input, starting after a short press so that scrolling stays possible.
 
 Covers:
 - `feat~tasks~1`

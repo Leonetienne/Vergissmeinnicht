@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Settings · Vergissmeinnicht{% endblock %}
+{% block content %}
+<div class="vm-settings" x-data="settingsPage">
+  <h1 class="vm-auth__app">Settings</h1>
+
+  <section class="vm-settings__section" id="profile"><h2 class="vm-section-title">Profile</h2>
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="profile">
+      <div class="vm-grid-2">
+        <label class="vm-field"><span>Display name</span><input class="vm-input" name="display_name" value="{{ user.display_name }}" maxlength="100" required></label>
+        <label class="vm-field"><span>Email</span><input class="vm-input" type="email" name="email" value="{{ user.email }}" required></label>
+      </div>
+      {% if errors.profile %}<p class="vm-error" role="alert">{{ errors.profile }}</p>{% endif %}
+      <button class="vm-btn vm-btn--primary">Save</button>
+    </form>
+  </section>
+
+  <section class="vm-settings__section" id="password"><h2 class="vm-section-title">Password</h2>
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="password">
+      <div class="vm-grid-2">
+        <label class="vm-field"><span>Current password</span><input class="vm-input" type="password" name="current_password" autocomplete="current-password" required></label>
+        <label class="vm-field"><span>New password</span><input class="vm-input" type="password" name="new_password" autocomplete="new-password" required></label>
+      </div>
+      {% if errors.password %}<p class="vm-error" role="alert">{{ errors.password }}</p>{% endif %}
+      <button class="vm-btn vm-btn--primary">Change password</button>
+    </form>
+  </section>
+
+  {% if EMAIL_CONFIGURED %}
+  <section class="vm-settings__section" id="notifications"><h2 class="vm-section-title">Notifications</h2>
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="notifications">
+      <label class="vm-toggle"><input type="checkbox" class="vm-check" name="reminders_enabled"{% if user.reminders_enabled %} checked{% endif %}>Due date reminders</label>
+      <button class="vm-btn vm-btn--primary">Save</button>
+    </form>
+  </section>
+  {% endif %}
+
+  <section class="vm-settings__section" id="second-factor"><h2 class="vm-section-title">Second factor</h2>
+    {% if recovery_codes %}
+      <p class="vm-help">Recovery codes, shown once. Each works one time in place of a code.</p>
+      <ul class="vm-codes" x-ref="codes">{% for code in recovery_codes %}<li>{{ code }}</li>{% endfor %}</ul>
+      <button type="button" class="vm-btn vm-btn--sm" style="justify-self:start" @click="copy($refs.codes.innerText)">Copy</button>
+    {% elif user.has_totp %}
+      <p class="vm-help">Active.</p>
+      <form method="post">{% csrf_token %}<input type="hidden" name="action" value="totp_remove">
+        <label class="vm-field"><span>Code</span><input class="vm-input" name="code" autocomplete="one-time-code" required></label>
+        {% if errors.totp_remove %}<p class="vm-error" role="alert">{{ errors.totp_remove }}</p>{% endif %}
+        <button class="vm-btn vm-btn--danger">Remove second factor</button>
+      </form>
+    {% elif totp_secret %}
+      <p class="vm-help">Scan the code with an authenticator app, then enter a code to activate.</p>
+      <div class="vm-row" style="align-items:flex-start;gap:var(--space-4);flex-wrap:wrap">
+        <div class="vm-qr">{{ totp_qr|safe }}</div>
+        <code class="vm-code" style="align-self:center">{{ totp_secret }}</code>
+      </div>
+      <form method="post">{% csrf_token %}<input type="hidden" name="action" value="totp_activate">
+        <label class="vm-field"><span>Code</span><input class="vm-input" name="code" inputmode="numeric" autocomplete="one-time-code" required></label>
+        {% if errors.totp_activate %}<p class="vm-error" role="alert">{{ errors.totp_activate }}</p>{% endif %}
+        <div class="vm-row"><button class="vm-btn vm-btn--primary">Activate</button>
+          <button class="vm-btn" name="action" value="totp_cancel" formnovalidate>Cancel</button></div>
+      </form>
+    {% else %}
+      <p class="vm-help">Not set up.</p>
+      <form method="post">{% csrf_token %}<input type="hidden" name="action" value="totp_start"><button class="vm-btn">Set up</button></form>
+    {% endif %}
+  </section>
+
+  {% include "accounts/_key_section.html" with kind="api" label="API key" key=keys.api %}
+  {% include "accounts/_key_section.html" with kind="mcp" label="MCP key" key=keys.mcp %}
+
+  <section class="vm-settings__section" id="appearance"><h2 class="vm-section-title">Appearance</h2>
+    <form method="post" enctype="multipart/form-data">{% csrf_token %}<input type="hidden" name="action" value="appearance">
+      <label class="vm-field"><span>Backdrop</span>
+        <input type="file" name="backdrop" accept="image/png,image/jpeg,image/webp,image/gif" style="font:400 13px/18px var(--font-sans);color:var(--ink-muted)">
+      </label>
+      <p class="vm-help">PNG, JPEG, WebP or GIF, up to 20 MB.{% if user.backdrop %} A backdrop is set.{% endif %}</p>
+      <div class="vm-grid-2">
+        <label class="vm-field"><span>Backdrop mode</span><select class="vm-select" name="backdrop_mode" style="width:100%">
+          <option value="cover"{% if user.backdrop_mode == "cover" %} selected{% endif %}>Cover</option>
+          <option value="fit"{% if user.backdrop_mode == "fit" %} selected{% endif %}>Fit</option></select></label>
+        <label class="vm-field"><span>Backdrop opacity</span><span class="vm-range-row">
+          <input type="range" class="vm-range" name="backdrop_opacity" min="0" max="100" x-model="backdropOpacity" value="{{ user.backdrop_opacity }}"><span x-text="backdropOpacity">{{ user.backdrop_opacity }}</span></span></label>
+      </div>
+      <label class="vm-field"><span>Backdrop CSS</span><textarea class="vm-textarea vm-code" name="backdrop_css" maxlength="2000" style="min-height:64px" x-model="css" @input="preview()">{{ user.backdrop_css }}</textarea></label>
+      <label class="vm-field"><span>Backdrop CSS up to 768px</span><textarea class="vm-textarea vm-code" name="backdrop_css_mobile" maxlength="2000" style="min-height:64px" x-model="cssMobile" @input="preview()">{{ user.backdrop_css_mobile }}</textarea></label>
+      <label class="vm-field"><span>UI opacity</span><span class="vm-range-row">
+        <input type="range" class="vm-range" name="ui_opacity" min="30" max="100" x-model="uiOpacity" @input="preview()" value="{{ user.ui_opacity }}"><span x-text="uiOpacity">{{ user.ui_opacity }}</span></span></label>
+      {% if errors.appearance %}<p class="vm-error" role="alert">{{ errors.appearance }}</p>{% endif %}
+      <button class="vm-btn vm-btn--primary">Save</button>
+    </form>
+    {% if user.backdrop %}
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="backdrop_remove"><button class="vm-btn vm-btn--sm">Remove backdrop</button></form>
+    {% endif %}
+  </section>
+
+  <section class="vm-settings__section vm-settings__section--danger" id="delete-account"><h2 class="vm-section-title">Delete account</h2>
+    <p class="vm-help">Deletes your account and every board you own with all lists and tasks.</p>
+    <form method="post" @submit.prevent="confirmSubmit($el, 'Delete your account? All boards and tasks you own are deleted.')">{% csrf_token %}
+      <input type="hidden" name="action" value="delete_account"><button class="vm-btn vm-btn--danger">Delete account</button>
+    </form>
+  </section>
+</div>
+{% endblock %}
+{% block page_data %}{{ appearance|json_script:"vm-appearance" }}{% endblock %}

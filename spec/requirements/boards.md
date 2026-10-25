@@ -21,9 +21,12 @@ Covers:
 Tags: UI
 
 ### Board list entry
-`req~boards.list.entry~1`
+`req~boards.list.entry~2`
 
-Each board list entry shall show the emoji field left of the board name and link to the board page.
+Each board list entry shall show the emoji field left of the board name and link the name to the board page; for the owner, a rename button next to the name shall start inline editing of the name.
+
+Rationale:
+A click on the name opens the board, so renaming needs its own trigger.
 
 Covers:
 - `feat~boards~1`

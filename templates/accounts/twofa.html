@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Second factor · Vergissmeinnicht{% endblock %}
+{% block content %}
+<div class="vm-auth"><form class="vm-auth__panel" method="post" action="/login/2fa">
+  {% csrf_token %}
+  <h1 class="vm-auth__app">Second factor</h1>
+  <label class="vm-field"><span>Code</span><input class="vm-input" name="code" inputmode="numeric" autocomplete="one-time-code" required autofocus></label>
+  <p class="vm-help">6-digit code from your authenticator app, or a recovery code.</p>
+  {% if error %}<p class="vm-error" role="alert">{{ error }}</p>{% endif %}
+  <button class="vm-btn vm-btn--primary" style="justify-content:center">Verify</button>
+</form></div>
+{% endblock %}

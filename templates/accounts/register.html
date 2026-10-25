@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Create account · Vergissmeinnicht{% endblock %}
+{% block content %}
+<div class="vm-auth"><form class="vm-auth__panel" method="post" action="/register">
+  {% csrf_token %}
+  <h1 class="vm-auth__app">Create account</h1>
+  <label class="vm-field"><span>Display name</span><input class="vm-input" name="display_name" value="{{ display_name }}" maxlength="100" required autofocus></label>
+  <label class="vm-field"><span>Email</span><input class="vm-input" type="email" name="email" value="{{ email }}" autocomplete="username" required></label>
+  <label class="vm-field"><span>Password</span><input class="vm-input" type="password" name="password" autocomplete="new-password" required></label>
+  {% if error %}<p class="vm-error" role="alert">{{ error }}</p>{% endif %}
+  <button class="vm-btn vm-btn--primary" style="justify-content:center">Create account</button>
+  <p class="vm-auth__alt"><a class="vm-link" href="/login">Log in</a></p>
+</form></div>
+{% endblock %}

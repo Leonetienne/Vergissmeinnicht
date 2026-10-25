@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest==8.4.2
+pytest-django==4.11.1
+selenium==4.36.0
+requests==2.32.5

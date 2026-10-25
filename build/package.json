@@ -1,0 +1,19 @@
+{
+  "name": "vergissmeinnicht-assets",
+  "private": true,
+  "scripts": {
+    "build:css": "sass scss/main.scss ../static/dist/main.css --style=compressed --no-source-map",
+    "build:js": "esbuild js/main.js --bundle --minify --target=es2020 --outfile=../static/dist/main.js",
+    "build:emoji": "cp node_modules/unicode-emoji-json/data-by-emoji.json ../static/dist/emoji.json",
+    "build": "mkdir -p ../static/dist && yarn build:css && yarn build:js && yarn build:emoji"
+  },
+  "dependencies": {
+    "alpinejs": "3.14.9",
+    "sortablejs": "1.15.6",
+    "unicode-emoji-json": "0.8.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.10",
+    "sass": "1.93.2"
+  }
+}

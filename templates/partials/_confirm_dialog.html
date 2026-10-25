@@ -1,0 +1,11 @@
+<div class="vm-scrim vm-overlay" x-data x-show="$store.confirm.open" x-cloak
+     @keydown.escape.window="$store.confirm.open && $store.confirm.answer(false)"
+     @click.self="$store.confirm.answer(false)">
+  <div class="vm-pop vm-pop--dialog" role="alertdialog" aria-label="Confirm">
+    <p class="vm-pop__message" x-text="$store.confirm.message"></p>
+    <div class="vm-pop__actions">
+      <button type="button" class="vm-btn" @click="$store.confirm.answer(false)">Cancel</button>
+      <button type="button" class="vm-btn vm-btn--danger" x-ref="ok" @click="$store.confirm.answer(true)" x-text="$store.confirm.ok"></button>
+    </div>
+  </div>
+</div>

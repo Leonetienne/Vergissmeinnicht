@@ -1,0 +1,11 @@
+.git
+venv
+data
+staticfiles
+static/dist
+build/node_modules
+**/__pycache__
+logfile.log
+.pytest_cache
+AGENTS.md
+.claude

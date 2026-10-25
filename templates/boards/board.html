@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}{{ board.name }} · Vergissmeinnicht{% endblock %}
+{% block content %}
+<div x-data="boardPage">
+  <div class="vm-page-title">
+    {% include "partials/_emoji_picker.html" with get="() => board.emoji" set="e => updateBoard({ emoji: e })" editable="isOwner" %}
+    <h1>{% include "partials/_inline_edit.html" with get="() => board.name" set="v => updateBoard({ name: v })" label="board name" editable="isOwner" %}</h1>
+    <div class="vm-page-title__actions">
+      <template x-if="canEdit"><button type="button" class="vm-btn" @click="archiveDone()">Archive what's done</button></template>
+      <a class="vm-btn" :href="board.url + 'archive/'" style="text-decoration:none">Open archive</a>
+      <template x-if="isOwner"><button type="button" class="vm-btn vm-btn--primary" @click="openShare()">Share</button></template>
+      <template x-if="!isOwner"><button type="button" class="vm-btn" @click="leaveBoard()">Leave board</button></template>
+      <template x-if="isOwner">
+        <button type="button" class="vm-icon-btn vm-icon-btn--danger" aria-label="Delete board" @click="deleteBoard()">
+          <svg viewBox="0 0 16 16"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg>
+        </button>
+      </template>
+    </div>
+  </div>
+
+  <template x-if="canEdit">
+    <div class="vm-board-tools">
+      <button type="button" class="vm-btn vm-btn--ghost vm-btn--sm" x-show="!creatingList" @click="startCreateList()"
+              x-text="hasCustomLists ? '+ Create another list' : '+ Create list'"></button>
+      <input class="vm-input" x-show="creatingList" x-ref="newList" x-model="newListTitle" placeholder="List name" aria-label="List name"
+             maxlength="100" @keydown.enter.prevent="createList()" @keydown.escape.prevent="creatingList = false" @blur="creatingList = false">
+    </div>
+  </template>
+
+  <div class="vm-board" x-ref="board">
+    <template x-for="list in sortedLists" :key="list.id">
+      <section class="vm-list" :class="list.is_default ? 'vm-list--default' : 'vm-list--custom'" :data-list-id="list.id">
+        <template x-if="!list.is_default">
+          <div class="vm-list__header">
+            {% include "partials/_inline_edit.html" with get="() => list.title" set="v => renameList(list, v)" label="list name" editable="canEdit" %}
+            <template x-if="canEdit">
+              <button type="button" class="vm-icon-btn vm-icon-btn--danger" aria-label="Delete list" @click="deleteList(list)">
+                <svg viewBox="0 0 16 16"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M4.5 4.5l.6 8.5h5.8l.6-8.5"/></svg>
+              </button>
+            </template>
+          </div>
+        </template>
+        <div class="vm-list__cards" :data-list-id="list.id" x-init="initTaskSort($el)">
+          <template x-for="task in openTasks(list)" :key="task.id">
+            {% include "boards/_task_card.html" %}
+          </template>
+        </div>
+        <template x-if="canEdit">
+          <input class="vm-input vm-input--entry" placeholder="New task" aria-label="New task" maxlength="200"
+                 @keydown.enter.prevent="createTask(list, $event.target)">
+        </template>
+        <template x-for="task in doneTasks(list)" :key="task.id">
+          {% include "boards/_task_card.html" %}
+        </template>
+        <a class="vm-link vm-link--meta vm-list__export" :href="'/export/list/' + list.id + '.json'">Json export</a>
+      </section>
+    </template>
+  </div>
+  <div class="vm-page-export"><a class="vm-link vm-link--meta" href="/export/board/{{ board.id }}.json">Json export</a></div>
+
+  <div class="vm-scrim vm-overlay" x-show="single" x-cloak @click.self="closeSingle()" @keydown.escape.window="single && closeSingle()">
+    <template x-if="single">
+      <div class="vm-pop" role="dialog" aria-label="Task">
+        <button type="button" class="vm-icon-btn vm-pop__close" aria-label="Close" @click="closeSingle()">×</button>
+        <label class="vm-field"><span>Title</span>
+          <input class="vm-input" :value="single.title" maxlength="200" :readonly="!canEdit"
+                 @change="$event.target.value.trim() ? saveField('title', $event.target.value.trim()) : ($event.target.value = single.title)"></label>
+        <div class="vm-field"><span>Due date</span><div class="vm-row">
+          <input class="vm-input" type="date" aria-label="Due date" :value="single.due_date || ''" :readonly="!canEdit"
+                 @change="saveField('due_date', $event.target.value || null)">
+          <template x-if="canEdit"><button type="button" class="vm-btn vm-btn--sm vm-btn--ghost" @click="saveField('due_date', null)">Clear</button></template>
+        </div></div>
+        <div class="vm-field"><span>Colour</span>
+          <div class="vm-swatches" role="radiogroup" aria-label="Colour">
+            <template x-for="c in colours" :key="c">
+              <button type="button" class="vm-swatch" :data-colour="c" role="radio" :aria-checked="String(single.colour === c)"
+                      :aria-label="c.charAt(0).toUpperCase() + c.slice(1)" :disabled="!canEdit" @click="saveField('colour', c)"></button>
+            </template>
+          </div></div>
+        <label class="vm-field"><span>Note</span>
+          <textarea class="vm-textarea" maxlength="5000" :readonly="!canEdit" x-model="noteDraft"
+                    @input.debounce.700ms="saveNote()" @blur="saveNote()"></textarea></label>
+        <a class="vm-link vm-link--meta" style="justify-self:end" :href="'/export/task/' + single.id + '.json'">Json export</a>
+      </div>
+    </template>
+  </div>
+
+  <div class="vm-scrim vm-overlay" x-show="share.open" x-cloak @click.self="share.open = false" @keydown.escape.window="share.open && (share.open = false)">
+    <div class="vm-pop vm-pop--dialog" role="dialog" aria-label="Share">
+      <button type="button" class="vm-icon-btn vm-pop__close" aria-label="Close" @click="share.open = false">×</button>
+      <h2 class="vm-pop__title" x-text="'Share ' + board.name"></h2>
+      <template x-for="sh in share.items" :key="sh.id">
+        <div class="vm-share">
+          <span class="vm-share__who"><span x-text="sh.user.display_name"></span><small x-text="sh.user.email"></small></span>
+          <select class="vm-select" aria-label="Role" x-init="$el.value = sh.role" @change="setRole(sh, $event.target.value)">
+            <option value="observer">Observer</option><option value="editor">Editor</option>
+          </select>
+          <button type="button" class="vm-btn vm-btn--sm" @click="removeShare(sh)">Remove</button>
+        </div>
+      </template>
+      <p class="vm-empty" x-show="!share.items.length">Not shared yet.</p>
+      <input class="vm-input" placeholder="Add by name or email" aria-label="Add user" x-ref="shareSearch" x-model="share.query"
+             @input.debounce.200ms="searchCandidates()">
+      <ul class="vm-results" x-show="share.candidates.length">
+        <template x-for="u in share.candidates" :key="u.id">
+          <li class="vm-result" role="option" @click="addShare(u)">
+            <span x-text="u.display_name"></span><span class="vm-result__where" x-text="u.email"></span>
+          </li>
+        </template>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block page_data %}{{ page_data|json_script:"vm-page-data" }}{% endblock %}

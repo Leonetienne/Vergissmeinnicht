@@ -1,0 +1,8 @@
+<style>
+  :root { --ui-alpha: {{ user.ui_opacity }}%; }
+  {% if user.backdrop %}.vm-backdrop { background-image: url("/settings/backdrop?v={{ user.backdrop|urlencode }}"); opacity: calc({{ user.backdrop_opacity }} / 100); }{% endif %}
+</style>
+<style id="vm-backdrop-css">
+  .vm-backdrop { {{ user.backdrop_css|safe }} }
+  @media (max-width: 768px) { .vm-backdrop { {{ user.backdrop_css_mobile|safe }} } }
+</style>

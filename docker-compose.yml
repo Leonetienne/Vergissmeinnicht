@@ -1,0 +1,53 @@
+# Local development stack: web on :8080, MariaDB, Mailpit UI on :8030.
+services:
+  web:
+    build:
+      context: .
+      args:
+        REQUIREMENTS: requirements-dev.txt
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8080:8000"
+    environment:
+      DEBUG: "TRUE"
+      DJANGO_SECRET_KEY: dev-secret-key
+      ALLOWED_HOSTS: "*"
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: vergissmeinnicht
+      DB_USER: vergissmeinnicht
+      DB_PASSWORD: vergissmeinnicht
+      ENABLE_REGISTRATION: "TRUE"
+      EMAIL_HOST: mailpit
+      EMAIL_PORT: "1025"
+      DEFAULT_FROM_EMAIL: vergissmeinnicht@localhost
+      SITE_URL: http://localhost:8080
+      APP_VERSION: dev
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: vergissmeinnicht
+      MARIADB_USER: vergissmeinnicht
+      MARIADB_PASSWORD: vergissmeinnicht
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db:/var/lib/mysql
+      - ./dev/db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 3s
+      retries: 30
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "8030:8025"
+
+volumes:
+  db:

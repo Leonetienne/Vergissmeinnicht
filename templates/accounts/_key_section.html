@@ -1,0 +1,13 @@
+<section class="vm-settings__section" id="{{ kind }}-key"><h2 class="vm-section-title">{{ label }}</h2>
+  {% if key %}<p class="vm-help">Created {{ key.created_at|date:"M j, Y" }} · {% if key.last_used_at %}Last used {{ key.last_used_at|date:"M j, Y" }}{% else %}Never used{% endif %}</p>
+  {% else %}<p class="vm-help">No key.</p>{% endif %}
+  {% if new_key.kind == kind %}
+  <div class="vm-field"><span>New key, shown once</span><div class="vm-row">
+    <code class="vm-code" style="flex:1" data-new-key>{{ new_key.value }}</code>
+    <button type="button" class="vm-btn vm-btn--sm" @click="copy('{{ new_key.value }}')">Copy</button></div></div>
+  {% endif %}
+  <div class="vm-row">
+    <form method="post" class="vm-inline-form">{% csrf_token %}<input type="hidden" name="action" value="{{ kind }}_generate"><button class="vm-btn">Generate</button></form>
+    {% if key %}<form method="post" class="vm-inline-form">{% csrf_token %}<input type="hidden" name="action" value="{{ kind }}_revoke"><button class="vm-btn">Revoke</button></form>{% endif %}
+  </div>
+</section>

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Log in · Vergissmeinnicht{% endblock %}
+{% block content %}
+<div class="vm-auth"><form class="vm-auth__panel" method="post" action="/login">
+  {% csrf_token %}
+  <h1 class="vm-auth__app">Vergissmeinnicht</h1>
+  <input type="hidden" name="next" value="{{ next }}">
+  <label class="vm-field"><span>Email</span><input class="vm-input" type="email" name="email" value="{{ email }}" autocomplete="username" required autofocus></label>
+  <label class="vm-field"><span>Password</span><input class="vm-input" type="password" name="password" autocomplete="current-password" required></label>
+  {% if error %}<p class="vm-error" role="alert">{{ error }}</p>{% endif %}
+  <button class="vm-btn vm-btn--primary" style="justify-content:center">Log in</button>
+  {% if ENABLE_REGISTRATION %}<p class="vm-auth__alt"><a class="vm-link" href="/register">Create account</a></p>{% endif %}
+</form></div>
+{% endblock %}

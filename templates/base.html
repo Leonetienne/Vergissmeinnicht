@@ -1,0 +1,42 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Vergissmeinnicht{% endblock %}</title>
+  <link rel="icon" href="{% static 'img/favicon.svg' %}">
+  <link rel="stylesheet" href="{% static 'dist/main.css' %}">
+  {% if user.is_authenticated %}{% include "partials/_appearance.html" %}{% endif %}
+  <script defer src="{% static 'dist/main.js' %}"></script>
+</head>
+<body data-emoji-url="{% static 'dist/emoji.json' %}">
+  {% if user.is_authenticated and user.backdrop %}<div class="vm-backdrop{% if user.backdrop_mode == 'fit' %} vm-backdrop--fit{% endif %}"></div>{% endif %}
+  {% if user.is_authenticated %}
+  <header class="vm-header">
+    <a class="vm-header__app" href="/">Vergissmeinnicht</a>
+    <button type="button" class="vm-icon-btn" aria-label="Search" x-data @click="$dispatch('open-search')">
+      <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
+    </button>
+    <div class="vm-header__menu" x-data="{ open: false }" @keydown.escape="open = false" @click.outside="open = false">
+      <button type="button" class="vm-icon-btn" aria-label="Menu" :aria-expanded="open" @click="open = !open">
+        <svg viewBox="0 0 16 16"><path d="M3 4.5h10M3 8h10M3 11.5h10"/></svg>
+      </button>
+      <nav class="vm-menu" x-show="open" x-cloak>
+        <a href="/settings/">Settings</a>
+        <form method="post" action="/logout">{% csrf_token %}<button type="submit">Logout</button></form>
+      </nav>
+    </div>
+  </header>
+  {% endif %}
+  <main class="vm-main">{% block content %}{% endblock %}</main>
+  <footer class="vm-footer"><span>{{ APP_VERSION }}</span><a href="{{ REPOSITORY_URL }}">Open Source on Github</a></footer>
+
+  {% include "partials/_toasts.html" %}
+  {% include "partials/_confirm_dialog.html" %}
+  {% if user.is_authenticated %}
+    {% include "partials/_search.html" %}
+    {{ api_routes|json_script:"vm-api-routes" }}
+  {% endif %}
+  {% block page_data %}{% endblock %}
+</body>
+</html>

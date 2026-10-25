@@ -1,0 +1,18 @@
+<div class="vm-scrim vm-overlay vm-overlay--top" x-data="searchPopup" x-show="open" x-cloak
+     @open-search.window="show()" @keydown.window="globalKey($event)" @click.self="close()">
+  <div class="vm-pop vm-pop--dialog" role="dialog" aria-label="Search">
+    <input class="vm-input" x-ref="input" x-model="query" aria-label="Search" placeholder="Search boards and tasks"
+           @input.debounce.150ms="fetch()" @keydown.down.prevent="moveSel(1)" @keydown.up.prevent="moveSel(-1)"
+           @keydown.enter.prevent="go(results[selected])" @keydown.escape.prevent="close()">
+    <ul class="vm-results" role="listbox" x-show="results.length">
+      <template x-for="(r, i) in results" :key="r.key">
+        <li class="vm-result" role="option" :aria-selected="i === selected" @click="go(r)" @mouseenter="selected = i">
+          <span x-text="r.label"></span>
+          <template x-if="r.tag"><span class="vm-tag" x-text="r.tag"></span></template>
+          <span class="vm-result__where" x-text="r.where"></span>
+        </li>
+      </template>
+    </ul>
+    <p class="vm-empty" x-show="query.trim().length >= 2 && searched && !results.length">No results</p>
+  </div>
+</div>

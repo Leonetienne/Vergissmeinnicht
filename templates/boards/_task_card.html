@@ -1,0 +1,19 @@
+<article class="vm-card" :id="'task-' + task.id" :data-task-id="task.id"
+         :data-colour="task.colour !== 'none' ? task.colour : null"
+         :class="{ 'vm-card--done': task.state === 'done', 'vm-card--drag': canEdit && task.state === 'open', 'vm-card--highlight': highlighted === task.id }">
+  <input type="checkbox" class="vm-check" aria-label="Done" :checked="task.state === 'done'" :disabled="!canEdit"
+         @change="toggle(task, $event.target)">
+  <div class="vm-card__body">
+    <span class="vm-card__title">
+      {% include "partials/_inline_edit.html" with get="() => task.title" set="v => updateTask(task, { title: v })" label="task title" editable="canEdit" maxlength=200 %}
+    </span>
+    <span class="vm-due" :class="dueClass(task)" x-show="task.due_date" x-text="formatDate(task.due_date)"></span>
+    <span class="vm-card__note" x-show="task.note" x-text="task.note"></span>
+  </div>
+  <div class="vm-card__actions">
+    <button type="button" class="vm-icon-btn" aria-label="Open details" @click="openSingle(task)">...</button>
+    <template x-if="canEdit">
+      <button type="button" class="vm-icon-btn vm-icon-btn--danger" aria-label="Delete task" @click="deleteTask(task)">×</button>
+    </template>
+  </div>
+</article>

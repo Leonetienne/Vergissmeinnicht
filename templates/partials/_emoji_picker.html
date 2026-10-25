@@ -1,0 +1,20 @@
+{% comment %}Params: get, set (JS arrow functions), editable (JS expression).{% endcomment %}
+<span class="vm-emoji-control" x-data="emojiControl({{ get }}, {{ set }})" @keydown.escape.stop="close()" @click.outside="close()">
+  <template x-if="!({{ editable }})"><span class="vm-emoji vm-emoji--readonly" x-text="value" x-show="value"></span></template>
+  <template x-if="{{ editable }}">
+    <button type="button" class="vm-emoji" :class="!value && 'vm-emoji--empty'" :aria-label="value ? 'Change emoji' : 'Choose emoji'"
+            @click.prevent.stop="toggle()" x-text="value"></button>
+  </template>
+  <div class="vm-emoji-picker" x-show="open" x-cloak @click.stop>
+    <input class="vm-input" placeholder="Search emoji" aria-label="Search emoji" x-ref="search" x-model="query">
+    <div class="vm-emoji-grid">
+      <template x-for="item in results" :key="item.char">
+        <button type="button" :title="item.name" :aria-label="item.name" @click.prevent="pick(item.char)" x-text="item.char"></button>
+      </template>
+    </div>
+    <p class="vm-empty" x-show="loaded && !results.length">No emoji found</p>
+    <div class="vm-row vm-row--between"><span></span>
+      <button type="button" class="vm-btn vm-btn--sm vm-btn--ghost" @click.prevent="pick('')">Remove</button>
+    </div>
+  </div>
+</span>

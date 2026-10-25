@@ -1,0 +1,9 @@
+<div class="vm-toasts" x-data aria-live="polite">
+  <template x-for="toast in $store.toasts.items" :key="toast.id">
+    <div class="vm-toast" :class="toast.error && 'vm-toast--error'" :role="toast.error ? 'alert' : 'status'">
+      <span x-text="toast.message"></span>
+      <button type="button" class="vm-icon-btn" aria-label="Close" @click="$store.toasts.close(toast.id)">×</button>
+    </div>
+  </template>
+  {% for message in messages %}<span hidden data-toast="{{ message }}" data-error="{% if message.level >= 40 %}1{% endif %}"></span>{% endfor %}
+</div>
