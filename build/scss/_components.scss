@@ -28,8 +28,9 @@
 .vm-check { width: 18px; height: 18px; margin: 2px 0 0; accent-color: var(--accent); cursor: pointer; }
 
 /* Inline edit */
-.vm-inline { cursor: text; border-radius: var(--radius-sm); padding: 0 var(--space-1); margin: 0 calc(-1 * var(--space-1)); }
-.vm-inline:hover { background: var(--accent-soft); }
+// Hover ground drawn as box-shadow: padding plus negative margin made shrink-wrapped titles wrap.
+.vm-inline { cursor: text; border-radius: var(--radius-sm); }
+.vm-inline:hover { background: var(--accent-soft); box-shadow: 0 0 0 var(--space-1) var(--accent-soft); }
 .vm-inline-input { font: inherit; color: inherit; background: var(--surface); border: 1px solid var(--focus-ring); border-radius: var(--radius-sm); padding: 0 var(--space-1); margin: -1px calc(-1 * var(--space-1) - 1px); outline: none; }
 
 /* Links */
@@ -60,7 +61,7 @@
 .vm-due--now::before { content: "!"; font-weight: 700; }
 
 /* Lists and board */
-.vm-board { display: flex; gap: var(--space-4); overflow-x: auto; align-items: flex-start; }
+.vm-board { display: flex; gap: var(--space-4); overflow-x: auto; align-items: stretch; }
 .vm-list { box-sizing: border-box; flex: none; width: var(--list-width); background: var(--surface-sunken-ui); border-radius: var(--radius-lg); padding: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
 .vm-list--default { background: transparent; padding-inline: 0; }
 .vm-list__header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-1) var(--space-1) 0 var(--space-2); font: 600 15px/20px var(--font-sans); cursor: grab; }
@@ -124,6 +125,7 @@
 .vm-share__who { display: grid; font: 400 15px/22px var(--font-sans); min-width: 0; }
 .vm-share__who small { font: 500 12px/16px var(--font-sans); color: var(--ink-muted); }
 .vm-select { width: auto; font-size: 13px; padding-right: var(--space-2); }
+.vm-select--sm { height: 26px; font-size: 12px; line-height: 16px; padding: 0 var(--space-1) 0 var(--space-2); }
 
 /* Toast */
 .vm-toasts { display: grid; gap: var(--space-2); justify-items: end; }

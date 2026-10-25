@@ -183,7 +183,11 @@ def test_exports(ui, owner):
     board = http.get(links[-1])
     assert board.headers["Content-Disposition"] == 'attachment; filename="export-board.json"'
     assert board.json()["lists"][0]["tasks"][0]["title"] == "Exported"
-    assert http.get(links[0]).json()["tasks"][0]["title"] == "Exported"
+    listing = http.get(links[0])
+    assert listing.json()["tasks"][0]["title"] == "Exported"
+    assert listing.headers["Content-Disposition"] == 'attachment; filename="export-board-list.json"'
+    board_link = ui.css(".vm-page-export a")
+    assert board_link.location["x"] < 60
 
 
 def test_reminder_email(ui, owner):

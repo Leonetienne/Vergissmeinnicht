@@ -142,3 +142,30 @@ def test_mobile_stacks_lists(ui, owner):
         assert ui.d.execute_script("return document.documentElement.scrollWidth <= window.innerWidth")
     finally:
         ui.d.set_window_size(1280, 900)
+
+
+def test_layout_titles_lists_and_share_row(ui):
+    member = new_user("Fred Fredolin")
+    ui.login(new_user("Leon Owner"))
+    ui.create_board("My tasks")
+    title = ui.css(".vm-page-title h1")
+    assert title.size["height"] <= 30
+    for name in ["A", "B"]:
+        ui.click(ui.xpath("//button[contains(normalize-space(), 'Create')][contains(normalize-space(), 'list')]"))
+        ui.type(ui.d.switch_to.active_element, name + Keys.ENTER)
+    for task in ["One", "Two", "Three"]:
+        ui.add_task(task, "A")
+    heights = {lst.size["height"] for lst in ui.all(".vm-list")}
+    assert len(heights) == 1
+
+    ui.click(ui.button("Share"))
+    ui.type(ui.css("input[aria-label='Add user']"), member.split("@")[0])
+    ui.keys(Keys.ENTER)
+    row = ui.css(".vm-share")
+    select, remove = ui.css("select", row), ui.css("button", row)
+    assert select.size["height"] == remove.size["height"] and select.location["y"] == remove.location["y"]
+    ui.keys(Keys.ESCAPE)
+
+    ui.go("/")
+    entry = ui.xpath("//div[contains(@class,'vm-board-entry')][.//*[normalize-space()='My tasks']]")
+    assert ui.css(".vm-board-entry__name", entry).size["height"] <= 22

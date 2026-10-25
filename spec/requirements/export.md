@@ -1,9 +1,9 @@
 # JSON Export
 
 ### Board export
-`req~export.board~1`
+`req~export.board~2`
 
-At the bottom right of every board page, the system shall show a "Json export" link that downloads the board with all lists and tasks of every state as a JSON file.
+At the bottom left of every board page, the system shall show a "Json export" link that downloads the board with all lists and tasks of every state as a JSON file.
 
 Covers:
 - `feat~export~1`
@@ -51,9 +51,9 @@ Covers:
 Tags: UI
 
 ### File name
-`req~export.filename~1`
+`req~export.filename~2`
 
-The downloaded file shall be named after the slug of the exported board, list or task with the extension `.json`.
+The downloaded file shall be named after the slug of the exported board or task, and for a list after the board slug and the list slug joined by a hyphen, with the extension `.json`.
 
 Covers:
 - `feat~export~1`

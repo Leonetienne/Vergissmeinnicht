@@ -281,7 +281,7 @@ class TestBoardPages:
         api = Client()
         api.force_login(owner)
         assert json.loads(response.content) == api.get(f"/api/v1/boards/{board.id}/").json() | {"role": "observer"}
-        assert client.get(f"/export/list/{lst.id}.json")["Content-Disposition"].endswith('"groceries.json"')
+        assert client.get(f"/export/list/{lst.id}.json")["Content-Disposition"].endswith('"household-groceries.json"')
         assert json.loads(client.get(f"/export/task/{task.id}.json").content)["title"] == "Oat milk"
         assert 'filename="oat-milk.json"' in client.get(f"/export/task/{task.id}.json")["Content-Disposition"]
 

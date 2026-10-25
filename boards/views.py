@@ -54,7 +54,7 @@ def export_list(request, list_id):
         lst = s.get_list(request.user, list_id)
     except s.ServiceError:
         raise Http404
-    return _download(list_data(lst, s.ordered_tasks(Task.objects.filter(list=lst))), lst.slug)
+    return _download(list_data(lst, s.ordered_tasks(Task.objects.filter(list=lst))), f"{lst.board.slug}-{lst.slug}")
 
 
 def export_task(request, task_id):

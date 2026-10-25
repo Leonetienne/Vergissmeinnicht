@@ -101,7 +101,7 @@
       <template x-for="row in share.rows" :key="row.user.id">
         <div class="vm-share">
           <span class="vm-share__who"><span x-text="row.user.display_name"></span><small x-text="row.user.email"></small></span>
-          <select class="vm-select" aria-label="Role" x-model="row.role">
+          <select class="vm-select vm-select--sm" aria-label="Role" x-model="row.role">
             <option value="observer">Observer</option><option value="editor">Editor</option>
           </select>
           <button type="button" class="vm-btn vm-btn--sm" @click="dropRow(row)">Remove</button>

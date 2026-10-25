@@ -44,8 +44,12 @@ button { font-family: inherit; }
 .vm-board-tools .vm-input { width: var(--list-width); max-width: 100%; }
 .vm-board { padding-bottom: var(--space-2); }
 .vm-list__cards { display: flex; flex-direction: column; gap: var(--space-2); min-height: 8px; }
+// Columns share the height of the longest list, so the card area of a short list stays a drop target.
+@media (min-width: 769px) {
+  .vm-list__cards { flex: 1; }
+}
 .vm-list__header .vm-inline-host { min-width: 0; overflow-wrap: anywhere; }
-.vm-page-export { display: flex; justify-content: flex-end; margin-top: var(--space-4); }
+.vm-page-export { display: flex; justify-content: flex-start; margin-top: var(--space-4); }
 .vm-card { cursor: pointer; }
 .vm-card--drag:active { cursor: grabbing; }
 .vm-card--highlight { transition: outline-color 0.4s; }
