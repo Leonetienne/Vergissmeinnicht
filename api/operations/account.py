@@ -1,4 +1,5 @@
 from accounts import services as acc
+from accounts.models import User
 from boards import services as s
 from boards.serializers import board_data, list_data, task_data
 
@@ -17,14 +18,16 @@ def search(user, q):
 
 
 @operation("profile_get", access=READ, method="GET", path="profile/",
-           description="Get the caller's display name, email address and reminder setting.")
+           description="Get the caller's display name, email address, reminder setting, theme and colour mode.")
 def profile_get(user):
     return acc.profile_data(user)
 
 
 @operation("profile_update", access=WRITE, method="PATCH", path="profile/",
-           description="Change display name, email address or reminder setting.",
+           description="Change display name, email address, reminder setting, theme or colour mode.",
            params={"display_name": {"type": "string"}, "email": {"type": "string"},
-                   "reminders_enabled": {"type": "boolean"}})
+                   "reminders_enabled": {"type": "boolean"},
+                   "theme": {"type": "string", "enum": [key for key, _ in User.THEMES]},
+                   "color_mode": {"type": "string", "enum": [key for key, _ in User.COLOR_MODES]}})
 def profile_update(user, **args):
     return acc.profile_data(acc.update_profile(user, **args))

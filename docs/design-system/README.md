@@ -2,7 +2,7 @@
 
 Exported from the design system artifact https://claude.ai/artifact/3UenZLrpfc6xKMCKoRrLNA, which stays the source; re-export after changing it there.
 
-- `tokens.json`: every colour, type style, spacing, radius, shadow, size and opacity token, light and dark values. In SCSS each token becomes a CSS custom property of the same name (`--accent`, `--space-2`, `--radius-md`); light values on `:root`, dark values in `@media (prefers-color-scheme: dark)`.
+- `tokens.json`: every colour, type style, spacing, radius, shadow, size and opacity token, light and dark values. In SCSS each token becomes a CSS custom property of the same name (`--accent`, `--space-2`, `--radius-md`); colours as `light-dark(<light>, <dark>)` pairs. The colour values listed are the Turquoise theme; the other themes live in `build/scss/_tokens.scss`.
 - `components/<Name>/README.md`: usage rules per component. `components/<Name>/preview.html`: HTML reference for markup and states.
 - `components/bundle.css`: reference styles with `vm-` classes, written against the tokens.
 
@@ -23,10 +23,12 @@ Vergissmeinnicht is a small, self-hosted to-do app: tasks on boards, optionally 
 
 ### Colour
 
-- Themes follow the browser's `prefers-color-scheme`. In the app, declare light values on `:root` and dark values in `@media (prefers-color-scheme: dark)`; this system shows them as the `light` and `dark` themes.
+- Colour themes: Turquoise (default) and OLED. Each sets `bg`, `surface`, `surface-sunken`, `border`, `border-strong`, `ink`, `ink-muted`, `accent`, `accent-hover`, `accent-soft` and `on-accent` under `[data-theme="<id>"]`; every other token is shared.
+- Colour mode: `data-mode` on `<html>` is `light`, `dark` or `system`, and sets `color-scheme`, which picks a side of each `light-dark()` pair. This system shows the two sides as the `light` and `dark` themes.
+- Both come from the user's account and are picked in the header's theme menu.
 - Theme only through CSS custom properties (`var(--accent)`), never SCSS variables.
 - Page ground is `bg`. Cards, header, inputs and popups are `surface`. List columns sit on `surface-sunken`; the default list has no ground so its cards read as loose tasks.
-- `accent` is the one brand colour: `#B7C4DE` in dark, its darker shade `#4A5E86` in light. Use it for primary buttons, links, checked checkboxes and focus. Text on it is `on-accent`.
+- `accent` is the one brand colour per theme; in Turquoise `#B7C4DE` in dark, its darker shade `#4A5E86` in light. Use it for primary buttons, links, checked checkboxes and focus. Text on it is `on-accent`.
 - Hover for quiet controls is `accent-soft`.
 - Text is `ink`; secondary text (notes, meta, done tasks, labels) is `ink-muted`. Both read on `bg`, `surface`, `surface-sunken` and every `task-*-tint`.
 - Lines: `border` for decorative hairlines, `border-strong` for anything a user operates (inputs, checkboxes, secondary buttons, colour circles).

@@ -1,5 +1,5 @@
 {% load static %}<!doctype html>
-<html lang="en">
+<html lang="en"{% if user.is_authenticated %} data-theme="{{ user.theme }}" data-mode="{{ user.color_mode }}"{% endif %}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,6 +20,19 @@
     <button type="button" class="vm-icon-btn" aria-label="Search" x-data @click="$dispatch('open-search')">
       <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>
     </button>
+    <div class="vm-header__menu" x-data="themeMenu" @keydown.escape="open = false" @click.outside="open = false">
+      <button type="button" class="vm-icon-btn" aria-label="Theme" :aria-expanded="open" @click="open = !open">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M8 2.5v11a5.5 5.5 0 0 0 0-11z" fill="currentColor"/></svg>
+      </button>
+      <div class="vm-menu vm-theme-menu" x-show="open" x-cloak>
+        <div class="vm-segmented" role="radiogroup" aria-label="Colour mode">
+          {% for key, label in user.COLOR_MODES %}<button type="button" role="radio" :aria-checked="mode === '{{ key }}'" @click="set('color_mode', '{{ key }}')">{{ label }}</button>{% endfor %}
+        </div>
+        <div role="radiogroup" aria-label="Theme" class="vm-theme-menu__themes">
+          {% for key, label in user.THEMES %}<button type="button" role="radio" :aria-checked="theme === '{{ key }}'" @click="set('theme', '{{ key }}')"><span class="vm-theme-swatch" data-theme="{{ key }}"></span>{{ label }}</button>{% endfor %}
+        </div>
+      </div>
+    </div>
     <div class="vm-header__menu" x-data="{ open: false }" @keydown.escape="open = false" @click.outside="open = false">
       <button type="button" class="vm-icon-btn" aria-label="Menu" :aria-expanded="open" @click="open = !open">
         <svg viewBox="0 0 16 16"><path d="M3 4.5h10M3 8h10M3 11.5h10"/></svg>

@@ -35,7 +35,18 @@ def test_profile(call, people):
     owner, editor = people[0], people[1]
     assert call("profile_get", owner).data["email"] == "owner@example.org"
     data = call("profile_update", owner, display_name="Leo", email="Leo@Example.org", reminders_enabled=False).data
-    assert data == {"id": owner.id, "display_name": "Leo", "email": "leo@example.org", "reminders_enabled": False}
+    assert data == {"id": owner.id, "display_name": "Leo", "email": "leo@example.org", "reminders_enabled": False,
+                    "theme": "turquoise", "color_mode": "system"}
     refused(call("profile_update", owner, email="EDITOR@example.org"), 409)
     refused(call("profile_update", owner, email="not-an-email"), 400)
     refused(call("profile_update", owner, display_name=""), 400)
+
+
+def test_theme_and_colour_mode(call, people):
+    owner = people[0]
+    data = call("profile_update", owner, theme="oled", color_mode="dark").data
+    assert (data["theme"], data["color_mode"]) == ("oled", "dark")
+    refused(call("profile_update", owner, theme="neon"), 400)
+    refused(call("profile_update", owner, color_mode="dusk"), 400)
+    owner.refresh_from_db()
+    assert (owner.theme, owner.color_mode) == ("oled", "dark")

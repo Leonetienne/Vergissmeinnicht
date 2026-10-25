@@ -1,33 +1,23 @@
 // Generated from docs/design-system/tokens.json; keep the names identical.
+// Colours are light-dark() pairs, so data-mode on <html> picks a side through color-scheme.
 :root {
   color-scheme: light dark;
-  --bg: #f4f5f8;
-  --surface: #ffffff;
-  --surface-sunken: #eceef3;
-  --border: #d5d9e2;
-  --border-strong: #8a92a3;
-  --ink: #1c2130;
-  --ink-muted: #5a6274;
-  --accent: #4a5e86;
-  --accent-hover: #3d4f73;
-  --accent-soft: #e3e8f2;
-  --on-accent: #ffffff;
-  --danger: #b42318;
-  --danger-soft: #fde7e4;
-  --on-danger: #ffffff;
-  --warning: #7a5a00;
-  --warning-soft: #fdf3d0;
-  --scrim: rgba(28, 33, 48, 0.4);
-  --task-red-tint: #fdecec;
-  --task-orange-tint: #fdf0e3;
-  --task-yellow-tint: #fcf7dc;
-  --task-green-tint: #e9f5ea;
-  --task-blue-tint: #e7effb;
-  --task-purple-tint: #f1eafa;
-  --task-grey-tint: #eeeff2;
-  --task-turquoise-tint: #edf0f6;
-  --shadow-card: 0 1px 2px rgba(28, 33, 48, 0.08);
-  --shadow-pop: 0 8px 24px rgba(28, 33, 48, 0.16);
+  --danger: light-dark(#b42318, #ff9b8f);
+  --danger-soft: light-dark(#fde7e4, #3d1d1a);
+  --on-danger: light-dark(#ffffff, #12151c);
+  --warning: light-dark(#7a5a00, #f2cf63);
+  --warning-soft: light-dark(#fdf3d0, #3a3016);
+  --scrim: light-dark(rgba(28, 33, 48, 0.4), rgba(0, 0, 0, 0.6));
+  --task-red-tint: light-dark(#fdecec, #2f1a1c);
+  --task-orange-tint: light-dark(#fdf0e3, #2f2216);
+  --task-yellow-tint: light-dark(#fcf7dc, #2c2814);
+  --task-green-tint: light-dark(#e9f5ea, #18271b);
+  --task-blue-tint: light-dark(#e7effb, #17213a);
+  --task-purple-tint: light-dark(#f1eafa, #241b33);
+  --task-grey-tint: light-dark(#eeeff2, #22252c);
+  --task-turquoise-tint: light-dark(#edf0f6, #1f2431);
+  --shadow-card: 0 1px 2px light-dark(rgba(28, 33, 48, 0.08), rgba(0, 0, 0, 0.4));
+  --shadow-pop: 0 8px 24px light-dark(rgba(28, 33, 48, 0.16), rgba(0, 0, 0, 0.5));
   --focus-ring: var(--accent);
   --inverse: var(--ink);
   --on-inverse: var(--bg);
@@ -61,35 +51,33 @@
   --ui-opacity-min: 0.3;
   --ui-opacity-max: 1;
 }
+:root[data-mode="light"] { color-scheme: light; }
+:root[data-mode="dark"] { color-scheme: dark; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #12151c;
-    --surface: #1b1f29;
-    --surface-sunken: #161a22;
-    --border: #2e3442;
-    --border-strong: #687187;
-    --ink: #e6e9f0;
-    --ink-muted: #9aa3b5;
-    --accent: #b7c4de;
-    --accent-hover: #c9d3e8;
-    --accent-soft: #263044;
-    --on-accent: #12151c;
-    --danger: #ff9b8f;
-    --danger-soft: #3d1d1a;
-    --on-danger: #12151c;
-    --warning: #f2cf63;
-    --warning-soft: #3a3016;
-    --scrim: rgba(0, 0, 0, 0.6);
-    --task-red-tint: #2f1a1c;
-    --task-orange-tint: #2f2216;
-    --task-yellow-tint: #2c2814;
-    --task-green-tint: #18271b;
-    --task-blue-tint: #17213a;
-    --task-purple-tint: #241b33;
-    --task-grey-tint: #22252c;
-    --task-turquoise-tint: #1f2431;
-    --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.5);
-  }
+// Themes. Not limited to :root, so a swatch with data-theme previews its own theme.
+:root, [data-theme="turquoise"] {
+  --bg: light-dark(#f4f5f8, #12151c);
+  --surface: light-dark(#ffffff, #1b1f29);
+  --surface-sunken: light-dark(#eceef3, #161a22);
+  --border: light-dark(#d5d9e2, #2e3442);
+  --border-strong: light-dark(#8a92a3, #687187);
+  --ink: light-dark(#1c2130, #e6e9f0);
+  --ink-muted: light-dark(#5a6274, #9aa3b5);
+  --accent: light-dark(#4a5e86, #b7c4de);
+  --accent-hover: light-dark(#3d4f73, #c9d3e8);
+  --accent-soft: light-dark(#e3e8f2, #263044);
+  --on-accent: light-dark(#ffffff, #12151c);
+}
+[data-theme="oled"] {
+  --bg: light-dark(#ffffff, #000000);
+  --surface: light-dark(#ffffff, #000000);
+  --surface-sunken: light-dark(#f3f3f3, #0a0a0a);
+  --border: light-dark(#e2e2e2, #262626);
+  --border-strong: light-dark(#8a8a8a, #707070);
+  --ink: light-dark(#000000, #ffffff);
+  --ink-muted: light-dark(#575757, #a3a3a3);
+  --accent: light-dark(#000000, #ffffff);
+  --accent-hover: light-dark(#2e2e2e, #d6d6d6);
+  --accent-soft: light-dark(#ededed, #1c1c1c);
+  --on-accent: light-dark(#ffffff, #000000);
 }

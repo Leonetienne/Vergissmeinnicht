@@ -37,6 +37,12 @@ def clean_email(value):
     return value
 
 
+def clean_choice(value, label, choices):
+    if value not in dict(choices):
+        raise Invalid(f"{label} must be one of {', '.join(dict(choices))}")
+    return value
+
+
 def check_email_free(email, user=None):
     taken = User.objects.filter(email__iexact=email)
     if user is not None:
@@ -60,7 +66,7 @@ def register(display_name, email, password):
     return User.objects.create_user(email, password, display_name=display_name)
 
 
-def update_profile(user, display_name=None, email=None, reminders_enabled=None):
+def update_profile(user, display_name=None, email=None, reminders_enabled=None, theme=None, color_mode=None):
     if display_name is not None:
         user.display_name = clean_text(display_name, "Display name", 100)
     if email is not None:
@@ -69,6 +75,10 @@ def update_profile(user, display_name=None, email=None, reminders_enabled=None):
         user.email = email
     if reminders_enabled is not None:
         user.reminders_enabled = bool(reminders_enabled)
+    if theme is not None:
+        user.theme = clean_choice(theme, "Theme", User.THEMES)
+    if color_mode is not None:
+        user.color_mode = clean_choice(color_mode, "Colour mode", User.COLOR_MODES)
     user.save()
     return user
 
@@ -79,6 +89,8 @@ def profile_data(user):
         "display_name": user.display_name,
         "email": user.email,
         "reminders_enabled": user.reminders_enabled,
+        "theme": user.theme,
+        "color_mode": user.color_mode,
     }
 
 

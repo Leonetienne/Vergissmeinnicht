@@ -35,6 +35,15 @@ html { scroll-padding-top: 64px; }
 }
 .vm-menu button:hover { background: var(--accent-soft); }
 .vm-menu form { display: grid; margin: 0; }
+.vm-segmented { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; padding: 2px; background: var(--surface-sunken); border-radius: var(--radius-md); }
+.vm-segmented button { padding: var(--space-1) var(--space-2); text-align: center; border: 0; border-radius: var(--radius-sm); background: transparent; font: 500 13px/18px var(--font-sans); color: var(--ink-muted); cursor: pointer; }
+.vm-segmented button[aria-checked="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow-card); }
+.vm-theme-menu { min-width: 200px; gap: var(--space-1); }
+.vm-theme-menu__themes { display: grid; }
+.vm-theme-menu__themes button { display: flex; align-items: center; gap: var(--space-2); }
+.vm-theme-menu__themes button[aria-checked="true"] { font-weight: 600; background: var(--accent-soft); }
+.vm-theme-swatch { box-sizing: border-box; width: 18px; height: 18px; display: grid; place-items: center; border-radius: var(--radius-full); background: var(--accent-soft); border: 1px solid var(--border-strong); }
+.vm-theme-swatch::after { content: ""; width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--accent); }
 
 .vm-main { flex: 1; box-sizing: border-box; width: 100%; min-width: 0; padding: var(--space-6); }
 .vm-footer { margin-top: auto; }

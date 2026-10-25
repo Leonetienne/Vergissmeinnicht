@@ -21,6 +21,19 @@ def test_login_redirect_next_and_logout(ui):
     assert ui.d.current_url.startswith(BASE + "/login")
 
 
+def test_theme_menu(ui, owner):
+    html = ui.css("html")
+    ui.click(ui.css("button[aria-label=Theme]"))
+    ui.click(ui.xpath("//button[normalize-space()='OLED']"))
+    ui.click(ui.xpath("//button[normalize-space()='Dark']"))
+    time.sleep(PAUSE)
+    assert (html.get_attribute("data-theme"), html.get_attribute("data-mode")) == ("oled", "dark")
+    ui.go("/settings/")
+    html = ui.css("html")
+    assert (html.get_attribute("data-theme"), html.get_attribute("data-mode")) == ("oled", "dark")
+    assert ui.d.execute_script("return getComputedStyle(document.body).backgroundColor") == "rgb(0, 0, 0)"
+
+
 def test_wrong_password_message(ui):
     ui.login(new_user(), "wrong-password")
     assert "Email or password is wrong" in ui.text()

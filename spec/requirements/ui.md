@@ -8,26 +8,42 @@ The UI shall be in English.
 Covers:
 - `feat~ui~1`
 
-### Theme
-`req~ui.theme~1`
+### Colour mode
+`req~ui.theme~2`
 
-The UI shall follow the browser's light or dark preference throughout.
+The UI shall show light or dark colours as the user's colour mode says: "Light", "Dark", or "System" (default), which follows the browser's preference.
+
+Covers:
+- `feat~ui~1`
+
+### Colour themes
+`req~ui.colour-themes~1`
+
+The system shall offer the colour themes "Turquoise" (default) and "OLED" (pure black in dark mode, pure white in light mode), each with light and dark colours.
+
+Covers:
+- `feat~ui~1`
+
+### Theme menu
+`req~ui.theme-menu~1`
+
+When a user picks a colour mode or colour theme in the header's theme menu, the system shall apply it at once without a page reload and store it with the account, so it applies on every page and device.
 
 Covers:
 - `feat~ui~1`
 
 ### Accent colour
-`req~ui.accent~1`
+`req~ui.accent~2`
 
-The UI shall use `#B7C4DE` as accent colour in dark mode and a darker shade of it with sufficient contrast on light backgrounds in light mode.
+In the Turquoise theme the UI shall use `#B7C4DE` as accent colour in dark mode and a darker shade of it with sufficient contrast on light backgrounds in light mode; every other theme shall use one accent per mode with the same contrast.
 
 Covers:
 - `feat~ui~1`
 
 ### Header
-`req~ui.header~2`
+`req~ui.header~3`
 
-Every logged-in page shall have a header with the app icon followed by "<display name>'s Home" linking to the board list, a search button and a menu with Settings and Logout.
+Every logged-in page shall have a header with the app icon followed by "<display name>'s Home" linking to the board list, a search button, a theme menu and a menu with Settings and Logout.
 
 Covers:
 - `feat~ui~1`

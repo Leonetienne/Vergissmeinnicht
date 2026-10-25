@@ -308,6 +308,14 @@ class TestBoardPages:
         people[0].save()
         assert "Jonas' Home" in client.get("/").content.decode()
 
+    def test_theme_on_html(self, client, people):
+        client.force_login(people[0])
+        assert '<html lang="en" data-theme="turquoise" data-mode="system">' in client.get("/").content.decode()
+        people[0].theme, people[0].color_mode = "oled", "dark"
+        people[0].save()
+        content = client.get("/").content.decode()
+        assert '<html lang="en" data-theme="oled" data-mode="dark">' in content and 'aria-label="Theme"' in content
+
     def test_footer(self, client, settings, db):
         settings.APP_VERSION = "1.4.0"
         content = client.get("/login").content.decode()

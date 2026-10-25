@@ -48,6 +48,8 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     BACKDROP_MODES = [("cover", "Cover"), ("fit", "Fit")]
+    THEMES = [("turquoise", "Turquoise"), ("oled", "OLED")]
+    COLOR_MODES = [("light", "Light"), ("dark", "Dark"), ("system", "System")]
 
     email = models.EmailField(unique=True)
     username = models.SlugField(max_length=70, unique=True)
@@ -64,6 +66,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     backdrop_css = models.TextField(blank=True)
     backdrop_css_mobile = models.TextField(blank=True)
     ui_opacity = models.PositiveSmallIntegerField(default=100)
+    theme = models.CharField(max_length=10, choices=THEMES, default="turquoise")
+    color_mode = models.CharField(max_length=6, choices=COLOR_MODES, default="system")
 
     totp_secret = models.CharField(max_length=64, blank=True)
     totp_last_step = models.BigIntegerField(null=True, blank=True)

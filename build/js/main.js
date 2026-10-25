@@ -6,6 +6,7 @@ import "./search";
 import "./board";
 import "./home";
 import "./settings";
+import "./theme";
 
 window.Alpine = Alpine;
 Alpine.start();
