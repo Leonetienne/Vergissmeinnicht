@@ -17,9 +17,17 @@ Covers:
 - `feat~ui~1`
 
 ### Colour themes
-`req~ui.colour-themes~1`
+`req~ui.colour-themes~2`
 
-The system shall offer the colour themes "Turquoise" (default) and "OLED" (pure black in dark mode, pure white in light mode), each with light and dark colours.
+The system shall offer the colour themes "Turquoise" (default), "OLED" (pure black in dark mode, pure white in light mode) and "Bubblegum" (pink), each with light and dark colours.
+
+Covers:
+- `feat~ui~1`
+
+### Bubblegum decoration
+`req~ui.bubblegum~1`
+
+While the Bubblegum theme is active, the UI shall show a playful look: rounded type and shapes, sticker shadows, a dotted pastel page ground, a striped header edge and drifting forget-me-not flowers behind the content; with reduced motion preferred, nothing moves.
 
 Covers:
 - `feat~ui~1`

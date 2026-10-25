@@ -315,6 +315,7 @@ class TestBoardPages:
         people[0].save()
         content = client.get("/").content.decode()
         assert '<html lang="en" data-theme="oled" data-mode="dark">' in content and 'aria-label="Theme"' in content
+        assert 'class="vm-petals"' in content and "Bubblegum" in content
 
     def test_footer(self, client, settings, db):
         settings.APP_VERSION = "1.4.0"

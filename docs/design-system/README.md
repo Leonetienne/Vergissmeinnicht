@@ -23,7 +23,8 @@ Vergissmeinnicht is a small, self-hosted to-do app: tasks on boards, optionally 
 
 ### Colour
 
-- Colour themes: Turquoise (default) and OLED. Each sets `bg`, `surface`, `surface-sunken`, `border`, `border-strong`, `ink`, `ink-muted`, `accent`, `accent-hover`, `accent-soft` and `on-accent` under `[data-theme="<id>"]`; every other token is shared.
+- Colour themes: Turquoise (default), OLED and Bubblegum. Each sets `bg`, `surface`, `surface-sunken`, `border`, `border-strong`, `ink`, `ink-muted`, `accent`, `accent-hover`, `accent-soft` and `on-accent` under `[data-theme="<id>"]`; every other token is shared.
+- Bubblegum is the one playful theme and may break the shape, depth and motion rules below: rounded type, larger radii, sticker shadows, pastel gradients, decorative flowers (`partials/_petals.html`). All of it lives in `build/scss/_bubblegum.scss` and stops under reduced motion.
 - Colour mode: `data-mode` on `<html>` is `light`, `dark` or `system`, and sets `color-scheme`, which picks a side of each `light-dark()` pair. This system shows the two sides as the `light` and `dark` themes.
 - Both come from the user's account and are picked in the header's theme menu.
 - Theme only through CSS custom properties (`var(--accent)`), never SCSS variables.

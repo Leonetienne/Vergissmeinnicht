@@ -48,7 +48,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     BACKDROP_MODES = [("cover", "Cover"), ("fit", "Fit")]
-    THEMES = [("turquoise", "Turquoise"), ("oled", "OLED")]
+    THEMES = [("turquoise", "Turquoise"), ("oled", "OLED"), ("bubblegum", "Bubblegum")]
     COLOR_MODES = [("light", "Light"), ("dark", "Dark"), ("system", "System")]
 
     email = models.EmailField(unique=True)

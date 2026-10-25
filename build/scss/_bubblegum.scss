@@ -1,0 +1,92 @@
+// Bubblegum: shapes, depth and decoration beyond colour. Colours live in _tokens.scss.
+[data-theme="bubblegum"] {
+  --font-sans: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", system-ui, sans-serif;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --candy-lilac: light-dark(#e6d4ff, #3a2552);
+  --candy-peach: light-dark(#ffe0cc, #43261d);
+  --candy-mint: light-dark(#d4f5e6, #17352a);
+  --sticker: color-mix(in srgb, var(--accent) 30%, transparent);
+  --shadow-card: 3px 3px 0 var(--sticker);
+  --shadow-pop: 6px 6px 0 var(--sticker), 0 12px 32px light-dark(rgba(120, 20, 70, 0.18), rgba(0, 0, 0, 0.5));
+}
+
+:root[data-theme="bubblegum"] {
+  scrollbar-color: var(--accent) transparent;
+  ::selection { background: var(--accent); color: var(--on-accent); }
+
+  body {
+    background:
+      radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--accent) 22%, transparent) 1.5px, transparent 0) 0 0 / 22px 22px,
+      radial-gradient(40vmax 40vmax at 0% 0%, var(--candy-lilac), transparent 70%),
+      radial-gradient(35vmax 35vmax at 100% 30%, var(--candy-peach), transparent 70%),
+      radial-gradient(45vmax 45vmax at 30% 100%, var(--candy-mint), transparent 70%),
+      var(--bg);
+    background-attachment: fixed;
+  }
+
+  .vm-header { border-bottom: 0; }
+  .vm-header::after {
+    content: ""; position: absolute; z-index: -1; left: 0; right: 0; bottom: -4px; height: 4px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0 24px, var(--candy-lilac) 24px 48px, var(--candy-peach) 48px 72px, var(--candy-mint) 72px 96px);
+  }
+  .vm-header__icon { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .vm-header__app:hover .vm-header__icon { transform: rotate(-18deg) scale(1.15); }
+
+  .vm-list { border: 2px dashed var(--border); }
+  .vm-list--default { border: 0; }
+  .vm-list__header .vm-inline-host::before { content: "✿"; margin-right: var(--space-1); color: var(--accent); }
+
+  .vm-card, .vm-board-entry {
+    border-width: 2px;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
+  }
+  .vm-card { --tilt: 0.35deg; transform: rotate(var(--tilt)); }
+  // Seven uneven steps, so neighbours look randomly tilted.
+  .vm-card:nth-child(7n+2) { --tilt: -0.8deg; }
+  .vm-card:nth-child(7n+3) { --tilt: 0.6deg; }
+  .vm-card:nth-child(7n+4) { --tilt: -0.2deg; }
+  .vm-card:nth-child(7n+5) { --tilt: 1deg; }
+  .vm-card:nth-child(7n+6) { --tilt: -0.55deg; }
+  .vm-card:nth-child(7n+7) { --tilt: 0.15deg; }
+  .vm-board-entry { --tilt: 0deg; }
+  .vm-card:hover, .vm-board-entry:hover { transform: translate(-1px, -2px) rotate(var(--tilt)); box-shadow: 5px 5px 0 var(--sticker); }
+  .vm-card.sortable-chosen { transform: rotate(calc(var(--tilt) + 2deg)) scale(1.03); }
+  .vm-card--done .vm-card__title { text-decoration: line-through wavy var(--accent); }
+  .vm-card--done .vm-card__title::after { content: " ♡"; color: var(--accent); }
+  .vm-check { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .vm-check:checked { transform: scale(1.2) rotate(-8deg); }
+
+  .vm-btn { border-radius: var(--radius-full); border-width: 2px; transition: transform 0.15s, box-shadow 0.15s; }
+  .vm-btn--primary {
+    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #8e5bd0));
+    box-shadow: 3px 3px 0 var(--sticker);
+  }
+  .vm-btn:hover { transform: translateY(-1px); }
+  .vm-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+  .vm-input, .vm-textarea, .vm-select { border-width: 2px; }
+
+  .vm-toast { border-radius: var(--radius-full); }
+}
+
+// Swatch preview in the theme menu, drawn outside the active theme as well.
+.vm-theme-swatch[data-theme="bubblegum"] { background: linear-gradient(135deg, var(--accent-soft), var(--candy-lilac)); }
+.vm-theme-swatch[data-theme="bubblegum"]::after { content: "♥"; width: auto; height: auto; background: none; color: var(--accent); font-size: 11px; line-height: 1; }
+
+.vm-petals { display: none; }
+:root[data-theme="bubblegum"] .vm-petals {
+  display: block; position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+}
+.vm-petals svg {
+  position: absolute; top: var(--y); left: var(--x); width: var(--size); height: var(--size);
+  color: var(--tint); opacity: 0.55;
+  animation: vm-petal-drift var(--time) ease-in-out infinite alternate;
+}
+@keyframes vm-petal-drift {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(-28px) rotate(40deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vm-petals svg, :root[data-theme="bubblegum"] * { animation: none !important; transition: none !important; }
+}

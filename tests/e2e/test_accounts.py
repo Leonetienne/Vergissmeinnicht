@@ -34,6 +34,18 @@ def test_theme_menu(ui, owner):
     assert ui.d.execute_script("return getComputedStyle(document.body).backgroundColor") == "rgb(0, 0, 0)"
 
 
+def test_bubblegum_theme(ui, owner):
+    petals = ui.css(".vm-petals")
+    assert not petals.is_displayed()
+    ui.click(ui.css("button[aria-label=Theme]"))
+    ui.click(ui.xpath("//button[normalize-space()='Bubblegum']"))
+    ui.click(ui.xpath("//button[normalize-space()='Light']"))
+    time.sleep(PAUSE)
+    assert ui.css("html").get_attribute("data-theme") == "bubblegum"
+    assert petals.is_displayed()
+    assert ui.d.execute_script("return getComputedStyle(document.body).backgroundColor") == "rgb(255, 240, 246)"
+
+
 def test_wrong_password_message(ui):
     ui.login(new_user(), "wrong-password")
     assert "Email or password is wrong" in ui.text()

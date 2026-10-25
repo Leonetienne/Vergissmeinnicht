@@ -50,3 +50,4 @@ def test_theme_and_colour_mode(call, people):
     refused(call("profile_update", owner, color_mode="dusk"), 400)
     owner.refresh_from_db()
     assert (owner.theme, owner.color_mode) == ("oled", "dark")
+    assert call("profile_update", owner, theme="bubblegum").data["theme"] == "bubblegum"

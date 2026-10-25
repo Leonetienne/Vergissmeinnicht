@@ -81,3 +81,16 @@
   --accent-soft: light-dark(#ededed, #1c1c1c);
   --on-accent: light-dark(#ffffff, #000000);
 }
+[data-theme="bubblegum"] {
+  --bg: light-dark(#fff0f6, #1f0d19);
+  --surface: light-dark(#ffffff, #2c1325);
+  --surface-sunken: light-dark(#ffe1ee, #25101f);
+  --border: light-dark(#f8c5dc, #4d2343);
+  --border-strong: light-dark(#c25f8e, #b0659a);
+  --ink: light-dark(#3d1230, #ffe8f3);
+  --ink-muted: light-dark(#86386a, #e3a6c8);
+  --accent: light-dark(#d1236c, #ff8fc4);
+  --accent-hover: light-dark(#b01a5b, #ffb1d5);
+  --accent-soft: light-dark(#ffd4e7, #4a1d3b);
+  --on-accent: light-dark(#ffffff, #2a0b1e);
+}

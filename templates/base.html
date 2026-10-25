@@ -12,6 +12,7 @@
 <body data-emoji-url="{% static 'dist/emoji.json' %}">
   {% if user.is_authenticated and user.backdrop %}<div class="vm-backdrop{% if user.backdrop_mode == 'fit' %} vm-backdrop--fit{% endif %}"></div>{% endif %}
   {% if user.is_authenticated %}
+  {% include "partials/_petals.html" %}
   <header class="vm-header">
     <a class="vm-header__app" href="/">
       <img class="vm-header__icon" src="{% static 'img/favicon.svg' %}" alt="">
