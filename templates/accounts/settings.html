@@ -86,10 +86,11 @@
       <label class="vm-field"><span>UI opacity</span><span class="vm-range-row">
         <input type="range" class="vm-range" name="ui_opacity" min="30" max="100" x-model="uiOpacity" @input="preview()" value="{{ user.ui_opacity }}"><span x-text="uiOpacity">{{ user.ui_opacity }}</span></span></label>
       {% if errors.appearance %}<p class="vm-error" role="alert">{{ errors.appearance }}</p>{% endif %}
-      <button class="vm-btn vm-btn--primary">Save</button>
+      <div class="vm-row"><button class="vm-btn vm-btn--primary">Save</button>
+        {% if user.backdrop %}<button class="vm-btn" form="backdrop-remove">Remove backdrop</button>{% endif %}</div>
     </form>
     {% if user.backdrop %}
-    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="backdrop_remove"><button class="vm-btn vm-btn--sm">Remove backdrop</button></form>
+    <form method="post" id="backdrop-remove" hidden>{% csrf_token %}<input type="hidden" name="action" value="backdrop_remove"></form>
     {% endif %}
   </section>
 
