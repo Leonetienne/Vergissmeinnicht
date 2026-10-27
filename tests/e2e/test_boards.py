@@ -127,7 +127,11 @@ def test_sharing_roles_and_leave(ui):
     board_url = ui.d.current_url
     ui.add_task("Visible task")
     ui.click(ui.button("Share"))
-    ui.type(ui.css("input[aria-label='Add user']"), member.split("@")[0])
+    search = ui.css("input[aria-label='Add user']")
+    assert search.get_attribute("type") == "search"
+    assert search.get_attribute("autocomplete") == "off"
+    assert all(search.get_attribute(a) is not None for a in ["data-1p-ignore", "data-lpignore", "data-bwignore"])
+    ui.type(search, member.split("@")[0])
     ui.keys(Keys.ENTER)
     assert "Mara Member" in ui.text(".vm-share")
     assert ui.d.switch_to.active_element.get_attribute("aria-label") == "Add user"

@@ -121,7 +121,8 @@
       </template>
       <p class="vm-empty" x-show="!share.rows.length">Not shared yet.</p>
       <div class="vm-combobox">
-        <input class="vm-input" placeholder="Add by name or email" aria-label="Add user" x-ref="shareSearch" x-model="share.query"
+        <input class="vm-input" type="search" placeholder="Add by name or email" aria-label="Add user" x-ref="shareSearch" x-model="share.query"
+               autocomplete="off" data-1p-ignore data-lpignore="true" data-bwignore data-form-type="other"
                role="combobox" aria-autocomplete="list" :aria-expanded="share.candidates.length > 0" aria-controls="vm-share-options"
                @input.debounce.200ms="searchCandidates()" @keydown.down.prevent="moveCandidate(1)" @keydown.up.prevent="moveCandidate(-1)"
                @keydown.enter.prevent="pickCandidate(share.candidates[share.active])">

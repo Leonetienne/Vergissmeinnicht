@@ -18,6 +18,14 @@ When the owner types at least 3 characters into the user search, the system shal
 Covers:
 - `feat~sharing~1`
 
+### User search autofill
+`req~sharing.search-autofill~1`
+
+The user search field shall carry the opt-out markers of the browser and of common password managers, so they offer no autofill there.
+
+Covers:
+- `feat~sharing~1`
+
 ### Add share
 `req~sharing.add~2`
 
