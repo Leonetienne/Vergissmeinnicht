@@ -92,6 +92,7 @@ html { scroll-padding-top: 64px; }
 .vm-board-entry { position: relative; cursor: pointer; }
 .vm-board-entry:hover { border-color: var(--border-strong); }
 .vm-board-entry__link { position: absolute; inset: 0; border-radius: inherit; }
+.vm-board-entry:has(.vm-emoji-control--open) { z-index: 2; }
 .vm-board-entry > .vm-emoji-control, .vm-board-entry__name .vm-inline, .vm-board-entry__name .vm-inline-input { position: relative; z-index: 1; }
 .vm-board-entry__name { flex: 0 1 auto; pointer-events: none; overflow-wrap: anywhere; }
 .vm-board-entry__name .vm-inline, .vm-board-entry__name .vm-inline-input { pointer-events: auto; }

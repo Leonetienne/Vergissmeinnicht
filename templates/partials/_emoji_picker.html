@@ -1,5 +1,5 @@
 {% comment %}Params: get, set (JS arrow functions), editable (JS expression).{% endcomment %}
-<span class="vm-emoji-control" x-data="emojiControl({{ get }}, {{ set }})" @keydown.escape.stop="close()" @click.outside="close()">
+<span class="vm-emoji-control" :class="open && 'vm-emoji-control--open'" x-data="emojiControl({{ get }}, {{ set }})" @keydown.escape.stop="close()" @click.outside="close()">
   <template x-if="!({{ editable }})"><span class="vm-emoji vm-emoji--readonly" x-text="value" x-show="value"></span></template>
   <template x-if="{{ editable }}">
     <button type="button" class="vm-emoji" :class="!value && 'vm-emoji--empty'" :aria-label="value ? 'Change emoji' : 'Choose emoji'"
