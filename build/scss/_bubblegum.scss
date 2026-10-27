@@ -3,6 +3,7 @@
   --font-sans: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", system-ui, sans-serif;
   --radius-sm: 8px;
   --radius-md: 16px;
+  --list-border: 2px;
   --radius-lg: 24px;
   --candy-lilac: light-dark(#e6d4ff, #3a2552);
   --candy-peach: light-dark(#ffe0cc, #43261d);
@@ -34,7 +35,7 @@
   .vm-header__icon { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
   .vm-header__app:hover .vm-header__icon { transform: rotate(-18deg) scale(1.15); }
 
-  .vm-list { border: 2px dashed var(--border); }
+  .vm-list { border: var(--list-border) dashed var(--border); }
   .vm-list--default { border: 0; }
   .vm-list__header .vm-inline-host::before { content: "✿"; margin-right: var(--space-1); color: var(--accent); }
 

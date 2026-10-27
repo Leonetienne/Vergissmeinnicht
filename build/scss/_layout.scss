@@ -75,6 +75,7 @@ html { scroll-padding-top: 64px; }
 }
 .vm-list__header .vm-inline-host { min-width: 0; overflow-wrap: anywhere; }
 .vm-page-export { display: flex; justify-content: flex-start; margin-top: var(--space-4); }
+@media (max-width: 768px) { .vm-page-export { justify-content: flex-end; padding-right: calc(var(--space-2) + var(--list-border, 0px)); } }
 .vm-card { cursor: pointer; }
 .vm-card--drag:active { cursor: grabbing; }
 .vm-card.sortable-ghost, .vm-list.sortable-ghost { opacity: 0.4; }
