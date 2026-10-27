@@ -48,6 +48,22 @@ def test_tap_opens_details_and_delete_with_confirm(ui, owner):
     assert ui.titles() == []
 
 
+def test_enter_in_singleview_title_saves_and_closes(ui, owner):
+    ui.create_board("Enter")
+    ui.add_task("Draft")
+    ui.open_card("Draft")
+    field = ui.css(".vm-pop input:not([type=date])")
+    ui.d.execute_script("arguments[0].select()", field)
+    field.send_keys("Final")
+    field.send_keys(Keys.ENTER)
+    time.sleep(PAUSE)
+    assert not ui.all(".vm-pop[aria-label=Task]")
+    assert ui.titles() == ["Final"]
+    ui.d.refresh()
+    time.sleep(PAUSE)
+    assert ui.titles() == ["Final"]
+
+
 def test_singleview_colour_due_note_and_export(ui, owner):
     ui.create_board("Details")
     ui.add_task("Renew passport")

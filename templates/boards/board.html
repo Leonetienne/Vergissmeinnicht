@@ -83,10 +83,10 @@
       <div class="vm-pop" role="dialog" aria-label="Task">
         <button type="button" class="vm-icon-btn vm-pop__close" aria-label="Close" @click="closeSingle()">×</button>
         <label class="vm-field"><span>Title</span>
-          <input class="vm-input" :value="single.title" maxlength="200" :readonly="!editable"
+          <input class="vm-input" :value="single.title" maxlength="200" :readonly="!editable" @keydown.enter.prevent="closeSingle()"
                  @change="$event.target.value.trim() ? saveField('title', $event.target.value.trim()) : ($event.target.value = single.title)"></label>
         <div class="vm-field"><span>Due date</span><div class="vm-row">
-          <input class="vm-input" type="date" aria-label="Due date" :value="single.due_date || ''" :readonly="!editable"
+          <input class="vm-input" type="date" aria-label="Due date" :value="single.due_date || ''" :readonly="!editable" @keydown.enter.prevent="closeSingle()"
                  @change="saveField('due_date', $event.target.value || null)">
           <template x-if="editable"><button type="button" class="vm-btn vm-btn--sm vm-btn--ghost" @click="saveField('due_date', null)">Clear</button></template>
         </div></div>

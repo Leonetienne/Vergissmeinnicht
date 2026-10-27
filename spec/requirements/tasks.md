@@ -189,9 +189,9 @@ Covers:
 Tags: UI
 
 ### Close singleview
-`req~tasks.singleview-close~1`
+`req~tasks.singleview-close~2`
 
-When the user presses Esc, clicks outside or clicks the close button, the system shall close the singleview and update the card.
+When the user presses Esc, presses Enter in the title or due date field, clicks outside or clicks the close button, the system shall save pending changes, close the singleview and update the card.
 
 Covers:
 - `feat~tasks~1`
