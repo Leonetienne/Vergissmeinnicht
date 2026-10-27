@@ -87,6 +87,38 @@ def test_inline_edit_escape_and_empty_restore(ui, owner):
     assert ui.text(".vm-page-title h1") == "Keep"
 
 
+
+def test_board_description_edit(ui, owner):
+    ui.create_board("Described")
+    desc = ".vm-board-desc .vm-inline"
+    outside = lambda: ui.click(ui.css(".vm-footer span"))
+    assert ui.text(desc) == "Describe this board..."
+    ui.click(ui.css(desc))
+    field = ui.d.switch_to.active_element
+    assert field.tag_name == "textarea" and field.get_attribute("rows") == "1"
+    assert field.get_attribute("placeholder") == "Describe this board..."
+    ui.type(field, "Weekly chores" + Keys.ENTER + "Daily too")
+    assert field.get_attribute("value") == "Weekly chores\nDaily too"
+    outside()
+    assert ui.text(desc) == "Weekly chores\nDaily too"
+
+    ui.click(ui.css(desc))
+    ui.type(ui.d.switch_to.active_element, " and more" + Keys.ESCAPE)
+    assert ui.text(desc) == "Weekly chores\nDaily too"
+    board_url = ui.d.current_url.replace(BASE, "")
+    ui.go(board_url)
+    assert ui.text(desc) == "Weekly chores\nDaily too"
+    ui.go("/")
+    entry = ui.xpath("//div[contains(@class,'vm-board-entry')][.//*[normalize-space()='Described']]")
+    assert ui.css(".vm-board-entry__desc", entry).text == "Weekly chores"
+    ui.go(board_url)
+
+    ui.click(ui.css(desc))
+    ui.d.switch_to.active_element.send_keys(Keys.CONTROL, "a", Keys.BACKSPACE)
+    outside()
+    assert ui.text(desc) == "Describe this board..."
+
+
 def test_sharing_roles_and_leave(ui):
     member = new_user("Mara Member")
     owner = new_user("Leon Owner")
@@ -107,6 +139,7 @@ def test_sharing_roles_and_leave(ui):
     ui.go(board_url.replace(BASE, ""))
     assert "Visible task" in ui.text()
     assert not ui.all("input[aria-label='New task']") and not ui.all("button[aria-label='Delete task']")
+    assert not ui.all(".vm-board-desc .vm-inline")
     assert not ui.css(".vm-card .vm-check").is_enabled()
     assert not ui.all("button[aria-label='Choose emoji']") and not ui.all("button[aria-label='Delete board']")
     assert not ui.all(".vm-page-title__actions button.vm-btn--primary")

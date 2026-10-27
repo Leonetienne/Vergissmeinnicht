@@ -109,7 +109,7 @@ Alpine.data("boardPage", (archive = false) => ({
   // Board
   updateBoard(fields) {
     const old = Object.fromEntries(Object.keys(fields).map((k) => [k, this.board[k]]));
-    const label = "title" in fields ? "rename board" : "change emoji";
+    const label = "title" in fields ? "rename board" : "description" in fields ? "change description" : "change emoji";
     const follow = (result) => {
       if (!result) return;
       this.board.url = result.url;

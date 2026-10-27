@@ -41,7 +41,7 @@ Alpine.data("boardList", () => {
       const title = input.value.trim();
       if (!title || this.titleTaken(title)) return;
       input.value = "";
-      let board = { id: newTempId("board"), title, emoji: "", url: "#", role: "owner" };
+      let board = { id: newTempId("board"), title, emoji: "", description: "", url: "#", role: "owner" };
       this.perform(
         () => {
           this.own.push(board);

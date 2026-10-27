@@ -250,7 +250,7 @@ def create_board(user, title, emoji="", position=None):
     return board
 
 
-def update_board(user, board_id, title=UNSET, emoji=UNSET):
+def update_board(user, board_id, title=UNSET, emoji=UNSET, description=UNSET):
     board = get_board(user, board_id, OWNER_ONLY)
     if title is not UNSET:
         board.title = clean_text(title, "Board title", 100)
@@ -258,6 +258,8 @@ def update_board(user, board_id, title=UNSET, emoji=UNSET):
         board.slug = board_slug(board.owner, board.title, board)
     if emoji is not UNSET:
         board.emoji = clean_emoji(emoji)
+    if description is not UNSET:
+        board.description = clean_text(description, "Board description", 1000, required=False)
     board.save()
     return board
 

@@ -10,6 +10,7 @@
         <span class="vm-board-entry__name">
           {% include "partials/_inline_edit.html" with get="() => board.title" set="v => rename(board, v)" label="board title" editable="true" %}
         </span>
+        <span class="vm-board-entry__desc" x-show="board.description" x-text="board.description.split('\n')[0]"></span>
       </div>
     </template>
   </div>
@@ -24,6 +25,7 @@
           <a class="vm-board-entry__link" :href="board.url" :aria-label="'Open ' + board.title"></a>
           <span class="vm-emoji vm-emoji--readonly" x-text="board.emoji"></span>
           <span class="vm-board-entry__name" x-text="board.title"></span>
+          <span class="vm-board-entry__desc" x-show="board.description" x-text="board.description.split('\n')[0]"></span>
           <span class="vm-board-entry__meta" x-text="board.owner.display_name + ' · ' + (board.role === 'editor' ? 'Editor' : 'Observer')"></span>
         </div>
       </template>

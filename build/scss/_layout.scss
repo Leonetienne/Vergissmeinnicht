@@ -54,6 +54,10 @@ html { scroll-padding-top: 64px; }
 .vm-page-title { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-4); }
 .vm-page-title h1 { flex: 0 1 auto; font: 600 24px/30px var(--font-sans); margin: 0; min-width: 0; overflow-wrap: break-word; }
 .vm-page-title__actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-left: auto; }
+.vm-board-desc { margin: calc(-1 * var(--space-2)) 0 var(--space-4); max-width: 640px; color: var(--ink-muted); font: 400 15px/22px var(--font-sans); }
+.vm-board-desc p { margin: 0; white-space: pre-line; overflow-wrap: anywhere; }
+.vm-board-desc__empty { opacity: .7; }
+.vm-board-desc__input { display: block; box-sizing: border-box; width: calc(100% + 2 * var(--space-2) + 2px); padding: var(--space-1) var(--space-2); margin: calc(-1 * var(--space-1) - 1px) calc(-1 * var(--space-2) - 1px); resize: none; overflow: hidden; field-sizing: content; }
 .vm-board-tools { margin-bottom: var(--space-3); display: flex; gap: var(--space-2); align-items: center; }
 .vm-board-tools .vm-input { width: var(--list-width); max-width: 100%; }
 // Scroll area clips its edges, so padding keeps focus rings and the anchor glow visible.
@@ -91,6 +95,7 @@ html { scroll-padding-top: 64px; }
 .vm-board-entry__name { flex: 0 1 auto; pointer-events: none; overflow-wrap: anywhere; }
 .vm-board-entry__name .vm-inline, .vm-board-entry__name .vm-inline-input { pointer-events: auto; }
 .vm-board-entry__meta { margin-left: auto; pointer-events: none; }
+.vm-board-entry__desc { flex: 1 1 0; min-width: 0; pointer-events: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font: 400 13px/18px var(--font-sans); color: var(--ink-muted); }
 
 .vm-overlay { position: fixed; inset: 0; z-index: 50; overflow-y: auto; box-sizing: border-box; }
 .vm-overlay--top { place-items: start center; padding-top: 10vh; }

@@ -151,6 +151,7 @@ class TestSerializers:
         data = board_data(board, [])
         assert data["owner"] == {"id": 3, "display_name": "Leon"}
         assert data["url"] == "/leon/home/" and data["lists"] == [] and data["role"] == "owner"
+        assert data["description"] == ""
 
 
 class TestTotp:

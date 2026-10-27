@@ -26,6 +26,18 @@
     </div>
   </div>
 
+  <div class="vm-board-desc" x-data="inlineEdit(() => board.description, v => updateBoard({ description: v }), { allowEmpty: true })"
+       x-show="board.description || (isOwner && !archive)">
+    <template x-if="!(isOwner && !archive)"><p x-text="value"></p></template>
+    <template x-if="isOwner && !archive">
+      <p class="vm-inline" :class="{ 'vm-board-desc__empty': !value }" tabindex="0" role="button" aria-label="Edit board description"
+         x-show="!editing" x-text="value || 'Describe this board...'" @click.stop.prevent="start()" @keydown.enter.prevent="start()"></p>
+    </template>
+    <textarea class="vm-inline-input vm-board-desc__input" rows="1" maxlength="1000" x-show="editing" x-cloak x-ref="input" x-model="draft"
+              placeholder="Describe this board..." aria-label="Board description" enterkeyhint="enter"
+              @input="fit()" @keydown.escape.prevent.stop="cancel()" @blur="commit()"></textarea>
+  </div>
+
   {% if not archive %}
   <template x-if="canEdit">
     <div class="vm-board-tools">

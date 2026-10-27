@@ -62,6 +62,17 @@ def test_update_board_owner_only(call, people, board):
     assert Board.objects.get(pk=board.id).title == "Home"
 
 
+
+def test_board_description(call, people, board):
+    owner, editor, observer, _ = people
+    assert call("board_get", observer, board_id=board.id).data["description"] == ""
+    assert call("board_update", owner, board_id=board.id, description="  Chores at home  ").data["description"] == "Chores at home"
+    assert call("board_get", observer, board_id=board.id).data["description"] == "Chores at home"
+    refused(call("board_update", editor, board_id=board.id, description="X"), 403)
+    refused(call("board_update", owner, board_id=board.id, description="x" * 1001), 400)
+    assert call("board_update", owner, board_id=board.id, description="").data["description"] == ""
+    assert Board.objects.get(pk=board.id).title == "Household"
+
 def test_starter_boards(db):
     user = User.objects.create_user("new@example.org", "pw1", display_name="New")
     assert list(Board.objects.filter(owner=user).values_list("title", "emoji", "slug")) == [

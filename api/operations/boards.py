@@ -5,6 +5,7 @@ from ..registry import ID, POSITION, READ, WRITE, operation
 
 TITLE = {"type": "string", "description": "1 to 100 characters"}
 EMOJI = {"type": "string", "description": "One emoji, or empty to remove it"}
+DESCRIPTION = {"type": "string", "description": "Up to 1000 characters, or empty to remove it"}
 
 
 @operation("boards_list", access=READ, method="GET", path="boards/",
@@ -29,8 +30,8 @@ def board_create(user, **args):
 
 
 @operation("board_update", access=WRITE, method="PATCH", path="boards/{board_id}/",
-           description="Rename a board or change its emoji. Owner only.",
-           params={"board_id": ID, "title": TITLE, "emoji": EMOJI}, required=["board_id"])
+           description="Rename a board or change its emoji or description. Owner only.",
+           params={"board_id": ID, "title": TITLE, "emoji": EMOJI, "description": DESCRIPTION}, required=["board_id"])
 def board_update(user, board_id, **args):
     return board_data(s.update_board(user, board_id, **args))
 

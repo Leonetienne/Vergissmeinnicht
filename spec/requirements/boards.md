@@ -92,14 +92,44 @@ Covers:
 - `feat~boards~1`
 
 ### Owner-only board actions
-`req~boards.owner-only~1`
+`req~boards.owner-only~2`
 
-The system shall allow renaming, changing the emoji, sharing and deleting a board only to its owner and shall not show these controls to anyone else.
+The system shall allow renaming, changing the emoji or description, sharing and deleting a board only to its owner and shall not show these controls to anyone else.
 
 Covers:
 - `feat~boards~1`
 
 Tags: Security
+
+## Description
+
+### Board description
+`req~boards.description~1`
+
+The system shall store an optional board description of up to 1000 characters and show it as a paragraph between the board page title and the list tools; while the description is empty, the system shall hide it from everyone but the owner.
+
+Covers:
+- `feat~boards~1`
+
+### Edit description
+`req~boards.description.edit~1`
+
+When the owner clicks the description, the system shall replace it with a textarea one row tall that grows with its content and shows the placeholder "Describe this board..."; Enter shall insert a line break, blur shall store the trimmed text, an empty text shall remove the description, and Esc shall discard the change.
+
+Covers:
+- `feat~boards~1`
+
+Tags: UI
+
+### Description in board list
+`req~boards.description.list~1`
+
+While a board has a description, the board list shall show its first line next to the board title on a single line, cut with an ellipsis where it exceeds the available width.
+
+Covers:
+- `feat~boards~1`
+
+Tags: UI
 
 ## Emoji icon
 

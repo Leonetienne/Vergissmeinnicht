@@ -37,6 +37,7 @@ def board_data(board, lists=None):
         "id": board.id,
         "title": board.title,
         "emoji": board.emoji,
+        "description": board.description,
         "url": board.get_absolute_url(),
         "owner": user_data(board.owner),
         "role": getattr(board, "role", None),

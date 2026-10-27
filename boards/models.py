@@ -11,6 +11,7 @@ class Board(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="boards")
     title = models.CharField(max_length=100)
     emoji = models.CharField(max_length=32, blank=True)
+    description = models.TextField(blank=True)
     slug = models.SlugField(max_length=70)
     position = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
