@@ -19,7 +19,7 @@ def test_board_list_create_rename_reorder_undo(ui, owner):
     ui.click(ui.all(".vm-board-entry__name .vm-inline")[3])
     assert "/" == ui.d.current_url.replace(BASE, "")
     field = ui.d.switch_to.active_element
-    field.send_keys(Keys.CONTROL, "a")
+    ui.select_all(field)
     ui.type(field, "Bravo" + Keys.ENTER)
     assert names()[1] == "Bravo"
 
@@ -65,7 +65,7 @@ def test_board_rename_slug_and_delete(ui, owner):
     ui.create_board("Old name")
     ui.click(ui.css(".vm-page-title .vm-inline"))
     field = ui.d.switch_to.active_element
-    field.send_keys(Keys.CONTROL, "a")
+    ui.select_all(field)
     ui.type(field, "New name" + Keys.ENTER)
     assert ui.d.current_url.endswith("/new-name/")
     ui.click(ui.css("button[aria-label='Delete board']"))
@@ -78,12 +78,13 @@ def test_inline_edit_escape_and_empty_restore(ui, owner):
     ui.create_board("Keep")
     ui.click(ui.css(".vm-page-title .vm-inline"))
     field = ui.d.switch_to.active_element
-    field.send_keys(Keys.CONTROL, "a")
+    ui.select_all(field)
     ui.type(field, "Changed" + Keys.ESCAPE)
     assert ui.text(".vm-page-title h1") == "Keep"
     ui.click(ui.css(".vm-page-title .vm-inline"))
     field = ui.d.switch_to.active_element
-    field.send_keys(Keys.CONTROL, "a", Keys.BACKSPACE)
+    ui.select_all(field)
+    field.send_keys(Keys.BACKSPACE)
     ui.type(field, Keys.ENTER)
     assert ui.text(".vm-page-title h1") == "Keep"
 
@@ -115,7 +116,9 @@ def test_board_description_edit(ui, owner):
     ui.go(board_url)
 
     ui.click(ui.css(desc))
-    ui.d.switch_to.active_element.send_keys(Keys.CONTROL, "a", Keys.BACKSPACE)
+    field = ui.d.switch_to.active_element
+    ui.select_all(field)
+    field.send_keys(Keys.BACKSPACE)
     outside()
     assert ui.text(desc) == "Describe this board..."
 
@@ -223,7 +226,7 @@ def test_duplicate_list_title_rejected(ui, owner):
 
     ui.click(ui.css(".vm-inline", ui.list_section("Later")))
     field = ui.d.switch_to.active_element
-    field.send_keys(Keys.CONTROL, "a")
+    ui.select_all(field)
     ui.type(field, "Groceries" + Keys.ENTER)
     assert titles() == ["Groceries", "Later"]
     ui.go(ui.d.current_url.replace(BASE, ""))
@@ -250,7 +253,7 @@ def test_duplicate_board_title_rejected(ui, owner):
 
     ui.click(ui.all(".vm-board-entry__name .vm-inline")[0])
     field = ui.d.switch_to.active_element
-    field.send_keys(Keys.CONTROL, "a")
+    ui.select_all(field)
     ui.type(field, "Shopping List" + Keys.ENTER)
     ui.go("/")
     assert names() == ["My Todos", "Shopping List"]

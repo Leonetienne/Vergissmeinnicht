@@ -120,7 +120,7 @@ def test_lists_create_rename_drag_delete(ui, owner):
 
     ui.click(ui.css(".vm-list__header .vm-inline"))
     field = ui.d.switch_to.active_element
-    field.send_keys(Keys.CONTROL, "a")
+    ui.select_all(field)
     ui.type(field, "Shop" + Keys.ENTER)
     ui.click(ui.css("button[aria-label='Delete list']", ui.list_section("Shop")))
     assert "Its tasks move to the default list" in ui.text("[role=alertdialog]")
@@ -337,7 +337,7 @@ def test_card_title_inline_edit_and_drag_from_any_surface(ui, owner):
     assert not ui.all("[role=dialog][aria-label=Task]") or not ui.css("[role=dialog][aria-label=Task]").is_displayed()
     field = ui.d.switch_to.active_element
     assert field.get_attribute("aria-label") == "task title"
-    field.send_keys(Keys.CONTROL, "a")
+    ui.select_all(field)
     ui.type(field, "Renamed" + Keys.ENTER)
     assert ui.titles() == ["First", "Renamed", "Third"]
 

@@ -76,6 +76,10 @@ class UI:
         element.send_keys(text)
         time.sleep(PAUSE)
 
+    def select_all(self, field):
+        """Select a field's text in JS, since Ctrl+A on macOS moves to the line start."""
+        self.d.execute_script("arguments[0].select()", field)
+
     def keys(self, *keys):
         ActionChains(self.d).send_keys(*keys).perform()
         time.sleep(PAUSE)
