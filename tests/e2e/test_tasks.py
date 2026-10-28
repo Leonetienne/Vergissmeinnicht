@@ -95,6 +95,22 @@ def test_singleview_colour_due_note_and_export(ui, owner):
     assert "vm-due--now" in ui.css(".vm-due", ui.card("Renew passport")).get_attribute("class")
 
 
+def test_dropped_task_flashes(ui, owner):
+    ui.create_board("Flash")
+    ui.add_task("First")
+    ui.add_task("Second")
+    ui.d.execute_script("""
+        window.flashed = [];
+        new MutationObserver((records) => records.forEach((r) => {
+          if (r.target.classList.contains('vm-flash')) window.flashed.push(r.target.getAttribute('aria-label'));
+        })).observe(document.body, { subtree: true, attributeFilter: ['class'] });
+    """)
+    ui.drag(ui.card("Second"), ui.card("First"), dy=2)
+    assert ui.titles() == ["Second", "First"]
+    assert ui.d.execute_script("return [...new Set(window.flashed)]") == ["Second"]
+    assert "vm-flash" not in ui.card("Second").get_attribute("class")
+
+
 def test_lists_create_rename_drag_delete(ui, owner):
     ui.create_board("Kanban")
     ui.add_task("Loose")
@@ -105,6 +121,7 @@ def test_lists_create_rename_drag_delete(ui, owner):
     ui.type(ui.d.switch_to.active_element, "Groceries" + Keys.ENTER)
     assert ui.button("+ Create another list").is_displayed()
     ui.click(ui.button("+ Create another list"))
+    assert ui.d.switch_to.active_element.get_attribute("aria-label") == "List title"
     ui.type(ui.d.switch_to.active_element, Keys.ESCAPE)
     assert len(ui.all(".vm-list")) == 2
     assert not ui.all(".vm-list--default .vm-list__header")

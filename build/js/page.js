@@ -58,6 +58,23 @@ document.addEventListener("click", (event) => {
   }
 }, true);
 
+// Matches the vm-flash animation length.
+const FLASH_MS = 500;
+
+// Alpine may re-render the dropped item as a new node, so it is found again by its data-*-id.
+function flashDropped(item, draggable) {
+  const attr = item.getAttributeNames().find((name) => /^data-.+-id$/.test(name));
+  if (!attr) return;
+  setTimeout(() => {
+    const el = document.querySelector(`${draggable}[${attr}="${item.getAttribute(attr)}"]`);
+    if (!el) return;
+    el.classList.remove("vm-flash");
+    void el.offsetWidth;
+    el.classList.add("vm-flash");
+    setTimeout(() => el.classList.remove("vm-flash"), FLASH_MS);
+  });
+}
+
 /**
  * SortableJS in pointer fallback mode (same on mouse and touch), with Alpine keeping the DOM.
  * onDrop(event) runs when the item landed elsewhere; onOutside(event) when it was released outside every dropZone element.
@@ -94,6 +111,8 @@ export function makeSortable(el, { onDrop, onOutside, dropZone, ...options }) {
       const released = moved && document.elementFromPoint(last.x, last.y);
       if (onOutside && moved && !(released && released.closest(dropZone))) onOutside(event);
       else if (event.from !== event.to || event.oldDraggableIndex !== event.newDraggableIndex) onDrop(event);
+      else return;
+      flashDropped(event.item, options.draggable);
     },
     ...options,
   });

@@ -51,7 +51,14 @@
   0%, 50% { box-shadow: 0 0 0 2px var(--focus-ring), 0 0 18px 4px color-mix(in srgb, var(--accent) 55%, transparent); }
   100% { box-shadow: var(--shadow-card); }
 }
+
+/* Dropped card, list or board */
+.vm-flash { animation: vm-flash 0.5s ease-out; }
+@keyframes vm-flash {
+  0%, 40% { box-shadow: 0 0 0 2px var(--focus-ring), 0 0 18px 4px color-mix(in srgb, var(--accent) 55%, transparent); }
+}
 @media (prefers-reduced-motion: reduce) {
+  .vm-flash { animation: none; outline: 2px solid var(--focus-ring); outline-offset: 2px; }
   .vm-card--highlight { animation: none; outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 }
 .vm-card[data-colour="red"] { background: color-mix(in srgb, var(--task-red-tint) var(--ui-alpha), transparent); }

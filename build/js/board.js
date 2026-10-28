@@ -1,7 +1,7 @@
 import Alpine from "alpinejs";
 import { op } from "./api";
 import { byPosition, makeSortable, mergeById, newTempId, page } from "./page";
-import { dueClass, failToast, formatDate, highlightAnchor, readJSON } from "./ui";
+import { dueClass, failToast, focusShown, formatDate, highlightAnchor, readJSON } from "./ui";
 import { remap, rid } from "./undo";
 
 const COLOURS = ["none", "red", "orange", "yellow", "green", "blue", "purple", "grey", "turquoise"];
@@ -175,7 +175,7 @@ Alpine.data("boardPage", (archive = false) => ({
   startCreateList() {
     this.creatingList = true;
     this.newListTitle = "";
-    setTimeout(() => this.$refs.newList.focus());
+    focusShown(this.$refs.newList);
   },
   listTitleTaken(title, except) {
     const wanted = title.toLowerCase();
@@ -407,7 +407,7 @@ Alpine.data("boardPage", (archive = false) => ({
   // Sharing: changes collect in the dialog and apply on Save.
   async openShare() {
     this.share = { open: true, rows: [], removed: [], query: "", candidates: [], active: 0, saving: false };
-    setTimeout(() => this.$refs.shareSearch.focus());
+    focusShown(this.$refs.shareSearch);
     try {
       const shares = await op("shares_list", { board_id: this.board.id });
       this.share.rows = shares.map((s) => ({ id: s.id, user: s.user, role: s.role, saved: s.role }));

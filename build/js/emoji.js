@@ -1,4 +1,5 @@
 import Alpine from "alpinejs";
+import { focusShown } from "./ui";
 
 let emojiList = null;
 
@@ -27,7 +28,7 @@ Alpine.data("emojiControl", (get, set) => ({
     this.open = !this.open;
     if (!this.open) return;
     this.query = "";
-    setTimeout(() => this.$refs.search.focus());
+    focusShown(this.$refs.search);
     this.all = await loadEmoji();
     this.loaded = true;
   },

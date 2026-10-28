@@ -168,6 +168,14 @@ When an editor or the owner drops a task outside every list, the system shall mo
 Covers:
 - `feat~tasks~1`
 
+### Drop flash
+`req~tasks.drop-flash~1`
+
+When a dragged task, list or board is dropped at a new place, the system shall let it glow for about half a second where it landed.
+
+Covers:
+- `feat~tasks~1`
+
 ### Touch drag
 `req~tasks.drag-touch~2`
 
