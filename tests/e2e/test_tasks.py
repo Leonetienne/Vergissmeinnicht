@@ -6,6 +6,8 @@ from selenium.webdriver.common.keys import Keys
 
 from .conftest import BASE, PAUSE, mailpit_messages, manage
 
+LINGER = 1.0
+
 
 def set_date(ui, value):
     field = ui.css(".vm-pop input[type=date]")
@@ -22,13 +24,35 @@ def test_quick_entry_check_uncheck_order(ui, owner):
     assert entry.get_attribute("enterkeyhint") == "enter"
     assert ui.titles() == ["One", "Two", "Three"]
     ui.click(ui.css(".vm-check", ui.card("One")))
-    assert ui.titles() == ["Two", "Three", "One"]
     assert "vm-card--done" in ui.card("One").get_attribute("class")
+    assert ui.titles() == ["One", "Two", "Three"]
+    time.sleep(LINGER)
+    assert ui.titles() == ["Two", "Three", "One"]
     ui.click(ui.css(".vm-check", ui.card("One")))
+    assert "vm-card--done" not in ui.card("One").get_attribute("class")
+    assert ui.titles() == ["Two", "Three", "One"]
+    time.sleep(LINGER)
     assert ui.titles() == ["One", "Two", "Three"]
     ui.d.refresh()
     time.sleep(PAUSE)
     assert ui.titles() == ["One", "Two", "Three"]
+
+
+def test_tick_taken_back_in_time_keeps_place(ui, owner):
+    ui.create_board("Linger")
+    for title in ["One", "Two"]:
+        ui.add_task(title)
+    check = ui.css(".vm-check", ui.card("One"))
+    check.click()
+    time.sleep(0.2)
+    check.click()
+    time.sleep(LINGER)
+    assert ui.titles() == ["One", "Two"]
+    assert "vm-card--done" not in ui.card("One").get_attribute("class")
+    ui.d.refresh()
+    time.sleep(PAUSE)
+    assert ui.titles() == ["One", "Two"]
+    assert "vm-card--done" not in ui.card("One").get_attribute("class")
 
 
 def test_tap_opens_details_and_delete_with_confirm(ui, owner):
@@ -304,6 +328,7 @@ def test_done_tasks_drag_and_default_list_hides(ui, owner):
     ui.add_task("Dry")
     ui.click(ui.css(".vm-check", ui.card("Wash")))
     ui.click(ui.css(".vm-check", ui.card("Dry")))
+    time.sleep(LINGER)
     ui.drag(ui.card("Dry"), ui.card("Wash"), dy=2)
     assert ui.titles() == ["Dry", "Wash"]
     assert all("vm-card--done" in c.get_attribute("class") for c in ui.all(".vm-card"))

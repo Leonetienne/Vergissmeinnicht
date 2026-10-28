@@ -17,8 +17,16 @@ function taskArgs(task) {
   return { list_id: rid("list", task.list_id), title, position, state, due_date, colour, note };
 }
 
+// A toggled card sorts by its previous state this long, so a mistaken tick can be taken back in place.
+const LINGER_MS = 1000;
+const lingerTimers = new Map();
+
+function sortState(task) {
+  return task.lingerState ?? task.state;
+}
+
 function bySortOrder(a, b) {
-  return STATE_ORDER[a.state] - STATE_ORDER[b.state] || a.position - b.position;
+  return STATE_ORDER[sortState(a)] - STATE_ORDER[sortState(b)] || a.position - b.position;
 }
 
 // The board page and its archive share this component; the archive shows archived tasks with selection instead of editing.
@@ -307,6 +315,7 @@ Alpine.data("boardPage", (archive = false) => ({
     const from = task.state;
     const to = from === "open" ? "done" : "open";
     checkbox.checked = to === "done";
+    this.linger(task, from);
     this.perform(
       () => (task.state = to),
       () => op("task_transition", { task_id: task.id, state: to }),
@@ -314,6 +323,14 @@ Alpine.data("boardPage", (archive = false) => ({
         () => op("task_transition", { task_id: rid("task", task.id), state: from }),
         () => op("task_transition", { task_id: rid("task", task.id), state: to })],
     );
+  },
+  linger(task, from) {
+    task.lingerState ??= from;
+    clearTimeout(lingerTimers.get(task.id));
+    lingerTimers.set(task.id, setTimeout(() => {
+      lingerTimers.delete(task.id);
+      delete task.lingerState;
+    }, LINGER_MS));
   },
   async deleteTask(task) {
     if (!(await window.confirmDialog(`Delete task ${task.title}?`))) return;

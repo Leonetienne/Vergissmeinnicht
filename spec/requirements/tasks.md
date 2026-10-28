@@ -119,17 +119,17 @@ Covers:
 ## States
 
 ### Check
-`req~tasks.check~1`
+`req~tasks.check~2`
 
-When an editor or the owner ticks the checkbox of an open task, the system shall set it to `done` and move it among the done tasks.
+When an editor or the owner ticks the checkbox of an open task, the system shall set it to `done` and show it as done at once, and move it among the done tasks one second after the last tick or untick of that task; if the task is open again by then, it shall stay in place.
 
 Covers:
 - `feat~tasks~1`
 
 ### Uncheck
-`req~tasks.uncheck~1`
+`req~tasks.uncheck~2`
 
-When an editor or the owner unticks the checkbox of a done task, the system shall set it to `open` and show it at its stored position among the open tasks.
+When an editor or the owner unticks the checkbox of a done task, the system shall set it to `open` and show it as open at once, and move it to its stored position among the open tasks one second after the last tick or untick of that task; if the task is done again by then, it shall stay in place.
 
 Covers:
 - `feat~tasks~1`
