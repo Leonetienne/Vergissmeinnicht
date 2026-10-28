@@ -17,7 +17,9 @@ def test_quick_entry_check_uncheck_order(ui, owner):
     ui.create_board("Tasks")
     for title in ["One", "Two", "Three"]:
         ui.add_task(title)
-    assert ui.d.switch_to.active_element.get_attribute("aria-label") == "New task"
+    entry = ui.d.switch_to.active_element
+    assert entry.get_attribute("aria-label") == "New task"
+    assert entry.get_attribute("enterkeyhint") == "enter"
     assert ui.titles() == ["One", "Two", "Three"]
     ui.click(ui.css(".vm-check", ui.card("One")))
     assert ui.titles() == ["Two", "Three", "One"]
@@ -99,6 +101,7 @@ def test_lists_create_rename_drag_delete(ui, owner):
     ui.add_task("Bread")
     create = ui.button("+ Create list")
     ui.click(create)
+    assert ui.d.switch_to.active_element.get_attribute("enterkeyhint") == "enter"
     ui.type(ui.d.switch_to.active_element, "Groceries" + Keys.ENTER)
     assert ui.button("+ Create another list").is_displayed()
     ui.click(ui.button("+ Create another list"))

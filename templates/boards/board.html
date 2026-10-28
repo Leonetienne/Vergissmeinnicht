@@ -44,7 +44,7 @@
       <button type="button" class="vm-btn vm-btn--ghost vm-btn--sm" x-show="!creatingList" @click="startCreateList()"
               x-text="hasCustomLists ? '+ Create another list' : '+ Create list'"></button>
       <input class="vm-input" x-show="creatingList" x-ref="newList" x-model="newListTitle" placeholder="List title" aria-label="List title"
-             maxlength="100" @keydown.enter.prevent="createList()" @keydown.escape.prevent="creatingList = false" @blur="creatingList = false">
+             maxlength="100" enterkeyhint="enter" @keydown.enter.prevent="createList()" @keydown.escape.prevent="creatingList = false" @blur="creatingList = false">
     </div>
   </template>
   {% endif %}
@@ -63,7 +63,7 @@
           </div>
         </template>
         <template x-if="editable">
-          <input class="vm-input vm-input--entry" placeholder="New task" aria-label="New task" maxlength="200"
+          <input class="vm-input vm-input--entry" placeholder="New task" aria-label="New task" maxlength="200" enterkeyhint="enter"
                  @keydown.enter.prevent="createTask(list, $event.target)">
         </template>
         <div class="vm-list__cards" :data-list-id="list.id" x-init="initTaskSort($el)">

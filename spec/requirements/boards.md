@@ -41,9 +41,9 @@ Covers:
 ## Creating, renaming, deleting
 
 ### Inline creation
-`req~boards.create~1`
+`req~boards.create~2`
 
-When a user types a title into the input at the end of their own boards and presses Enter, the system shall create the board with an empty default list, show it in the list with an empty emoji placeholder, and clear the input for the next title.
+When a user types a title into the input at the end of their own boards and presses Enter, including the Enter key of an on-screen keyboard, the system shall create the board with an empty default list, show it in the list with an empty emoji placeholder, and clear the input for the next title.
 
 Covers:
 - `feat~boards~1`

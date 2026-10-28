@@ -14,7 +14,7 @@
       </div>
     </template>
   </div>
-  <input class="vm-input vm-input--entry" placeholder="New board" aria-label="New board" maxlength="100"
+  <input class="vm-input vm-input--entry" placeholder="New board" aria-label="New board" maxlength="100" enterkeyhint="enter"
          @keydown.enter.prevent="create($event.target)">
 
   <template x-if="shared.length">

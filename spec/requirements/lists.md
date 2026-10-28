@@ -56,9 +56,9 @@ Tags: UI
 ## Managing lists
 
 ### Create list
-`req~lists.create~1`
+`req~lists.create~2`
 
-Above the lists, the system shall show a small button "Create list", or "Create another list" while the board has a list besides the default list; when clicked, it shall show a title input, and Enter shall create the list at the end; Esc or an empty title shall cancel.
+Above the lists, the system shall show a small button "Create list", or "Create another list" while the board has a list besides the default list; when clicked, it shall show a title input, and Enter, including the Enter key of an on-screen keyboard, shall create the list at the end; Esc or an empty title shall cancel.
 
 Covers:
 - `feat~lists~1`

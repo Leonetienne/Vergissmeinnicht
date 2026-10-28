@@ -31,9 +31,9 @@ Tags: UI
 ## Creating
 
 ### Quick entry
-`req~tasks.create~2`
+`req~tasks.create~3`
 
-Every list shall contain an input for a new task at its top, above the cards; when an editor or the owner types a title and presses Enter, the system shall create an open task at the end of the list's open tasks, clear the input and keep the focus in it.
+Every list shall contain an input for a new task at its top, above the cards; when an editor or the owner types a title and presses Enter, including the Enter key of an on-screen keyboard, the system shall create an open task at the end of the list's open tasks, clear the input and keep the focus in it.
 
 Covers:
 - `feat~tasks~1`

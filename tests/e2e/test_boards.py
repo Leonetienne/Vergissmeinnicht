@@ -8,6 +8,7 @@ from .conftest import BASE, PAUSE, new_user
 def test_board_list_create_rename_reorder_undo(ui, owner):
     ui.go("/")
     entry = ui.css("input[aria-label='New board']")
+    assert entry.get_attribute("enterkeyhint") == "enter"
     for name in ["Alpha", "Beta", "Gamma"]:
         ui.type(entry, name + Keys.ENTER)
     assert ui.d.switch_to.active_element == entry
