@@ -96,6 +96,14 @@ export function highlightAnchor(component) {
   });
 }
 
+// x-show reveals elements in an animation frame, so focus waits until that frame has run.
+export function focusShown(el, { select = false } = {}) {
+  requestAnimationFrame(() => setTimeout(() => {
+    el.focus();
+    if (select) el.select();
+  }));
+}
+
 export function failToast(error) {
   window.toast(error.message || String(error), { error: true });
 }

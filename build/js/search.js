@@ -1,5 +1,6 @@
 import Alpine from "alpinejs";
 import { op } from "./api";
+import { focusShown } from "./ui";
 
 const LIST_LABEL_MAX = 24;
 
@@ -17,10 +18,7 @@ Alpine.data("searchPopup", () => ({
   },
   show() {
     this.open = true;
-    setTimeout(() => {
-      this.$refs.input.focus();
-      this.$refs.input.select();
-    });
+    focusShown(this.$refs.input, { select: true });
   },
   close() {
     this.open = false;

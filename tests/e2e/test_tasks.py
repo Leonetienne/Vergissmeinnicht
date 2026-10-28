@@ -194,6 +194,12 @@ def test_search_popup(ui, owner):
     assert any("Renew passport" in r.text and r.text.endswith("Paperwork") for r in rows) and any("done" in r.text for r in rows)
     ui.keys(Keys.ESCAPE)
     assert not ui.css("[role=dialog][aria-label=Search]").is_displayed()
+    ui.click(ui.css("input[aria-label='New board']"))
+    ui.chord("f")
+    field = ui.d.switch_to.active_element
+    assert field.get_attribute("aria-label") == "Search"
+    assert ui.d.execute_script("return arguments[0].selectionEnd - arguments[0].selectionStart", field) == 4
+    ui.keys(Keys.ESCAPE)
     ui.click(ui.css("button[aria-label=Search]"))
     ui.type(ui.d.switch_to.active_element, "renew")
     ui.keys(Keys.ENTER)
