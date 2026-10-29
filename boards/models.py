@@ -40,9 +40,13 @@ class Share(models.Model):
         constraints = [models.UniqueConstraint(fields=["board", "user"], name="one_share_per_user")]
 
 
+COLOURS = ["none", "red", "orange", "yellow", "green", "blue", "purple", "grey", "turquoise"]
+
+
 class List(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="lists")
     title = models.CharField(max_length=100, blank=True)
+    colour = models.CharField(max_length=10, default="none")
     is_default = models.BooleanField(default=False)
     position = models.PositiveIntegerField(default=0)
 
@@ -59,7 +63,6 @@ class Task(models.Model):
     DONE = "done"
     ARCHIVED = "archived"
     STATES = [OPEN, DONE, ARCHIVED]
-    COLOURS = ["none", "red", "orange", "yellow", "green", "blue", "purple", "grey", "turquoise"]
 
     list = models.ForeignKey(List, on_delete=models.CASCADE, related_name="tasks")
     title = models.CharField(max_length=200)

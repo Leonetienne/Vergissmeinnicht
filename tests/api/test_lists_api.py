@@ -32,6 +32,19 @@ def test_rename_list(call, people, board, default_list):
     refused(call("list_update", owner, list_id=default_list.id, title="C"), 400)
 
 
+def test_list_colour(call, people, board, default_list):
+    owner, editor, observer, _ = people
+    lst = s.create_list(owner, board.id, "A")
+    assert call("list_get", owner, list_id=lst.id).data["colour"] == "none"
+    data = call("list_update", editor, list_id=lst.id, colour="green").data
+    assert data["colour"] == "green" and data["title"] == "A"
+    assert call("list_update", owner, list_id=lst.id, title="B").data["colour"] == "green"
+    refused(call("list_update", owner, list_id=lst.id, colour="pink"), 400)
+    refused(call("list_update", observer, list_id=lst.id, colour="red"), 403)
+    refused(call("list_update", owner, list_id=default_list.id, colour="red"), 400)
+    assert call("list_create", owner, board_id=board.id, title="C", colour="blue").data["colour"] == "blue"
+
+
 def test_list_titles_unique_per_board(call, people, board):
     owner = people[0]
     a = s.create_list(owner, board.id, "Groceries")

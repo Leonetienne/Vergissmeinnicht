@@ -159,6 +159,14 @@ def test_lists_create_rename_drag_delete(ui, owner):
     entry = ui.css("input[aria-label='New task']", ui.list_section("Groceries"))
     assert entry.location["y"] < ui.card("Bread").location["y"]
 
+    ui.click(ui.css(".vm-swatch[data-colour=green]", ui.list_section("Groceries")))
+    assert ui.list_section("Groceries").get_attribute("data-colour") == "green"
+    assert ui.css(".vm-swatch[data-colour=green]", ui.list_section("Groceries")).get_attribute("aria-checked") == "true"
+    assert not ui.all(".vm-list--default .vm-swatch")
+    ui.d.refresh()
+    time.sleep(PAUSE)
+    assert ui.list_section("Groceries").get_attribute("data-colour") == "green"
+
     ui.click(ui.css(".vm-list__header .vm-inline"))
     field = ui.d.switch_to.active_element
     ui.select_all(field)
@@ -171,6 +179,7 @@ def test_lists_create_rename_drag_delete(ui, owner):
     ui.click(ui.css(".vm-footer span"))
     ui.chord("z")
     assert ui.titles("Shop") == ["Bread"]
+    assert ui.list_section("Shop").get_attribute("data-colour") == "green"
     ui.chord("z", shift=True)
     assert len(ui.all(".vm-list")) == 1
 

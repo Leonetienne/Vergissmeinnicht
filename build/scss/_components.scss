@@ -61,14 +61,14 @@
   .vm-flash { animation: none; outline: 2px solid var(--focus-ring); outline-offset: 2px; }
   .vm-card--highlight { animation: none; outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 }
-.vm-card[data-colour="red"] { background: color-mix(in srgb, var(--task-red-tint) var(--ui-alpha), transparent); }
-.vm-card[data-colour="orange"] { background: color-mix(in srgb, var(--task-orange-tint) var(--ui-alpha), transparent); }
-.vm-card[data-colour="yellow"] { background: color-mix(in srgb, var(--task-yellow-tint) var(--ui-alpha), transparent); }
-.vm-card[data-colour="green"] { background: color-mix(in srgb, var(--task-green-tint) var(--ui-alpha), transparent); }
-.vm-card[data-colour="blue"] { background: color-mix(in srgb, var(--task-blue-tint) var(--ui-alpha), transparent); }
-.vm-card[data-colour="purple"] { background: color-mix(in srgb, var(--task-purple-tint) var(--ui-alpha), transparent); }
-.vm-card[data-colour="grey"] { background: color-mix(in srgb, var(--task-grey-tint) var(--ui-alpha), transparent); }
-.vm-card[data-colour="turquoise"] { background: color-mix(in srgb, var(--task-turquoise-tint) var(--ui-alpha), transparent); }
+.vm-card[data-colour="red"], .vm-list[data-colour="red"] { background: color-mix(in srgb, var(--task-red-tint) var(--ui-alpha), transparent); }
+.vm-card[data-colour="orange"], .vm-list[data-colour="orange"] { background: color-mix(in srgb, var(--task-orange-tint) var(--ui-alpha), transparent); }
+.vm-card[data-colour="yellow"], .vm-list[data-colour="yellow"] { background: color-mix(in srgb, var(--task-yellow-tint) var(--ui-alpha), transparent); }
+.vm-card[data-colour="green"], .vm-list[data-colour="green"] { background: color-mix(in srgb, var(--task-green-tint) var(--ui-alpha), transparent); }
+.vm-card[data-colour="blue"], .vm-list[data-colour="blue"] { background: color-mix(in srgb, var(--task-blue-tint) var(--ui-alpha), transparent); }
+.vm-card[data-colour="purple"], .vm-list[data-colour="purple"] { background: color-mix(in srgb, var(--task-purple-tint) var(--ui-alpha), transparent); }
+.vm-card[data-colour="grey"], .vm-list[data-colour="grey"] { background: color-mix(in srgb, var(--task-grey-tint) var(--ui-alpha), transparent); }
+.vm-card[data-colour="turquoise"], .vm-list[data-colour="turquoise"] { background: color-mix(in srgb, var(--task-turquoise-tint) var(--ui-alpha), transparent); }
 
 /* Due date */
 .vm-due { justify-self: start; display: inline-flex; align-items: center; gap: var(--space-1); padding: 0 6px; border-radius: var(--radius-sm); font: 500 12px/18px var(--font-sans); color: var(--ink-muted); }
@@ -80,8 +80,9 @@
 .vm-board { display: flex; gap: var(--space-4); overflow-x: auto; align-items: stretch; }
 .vm-list { box-sizing: border-box; flex: none; width: var(--list-width); background: var(--surface-sunken-ui); border-radius: var(--radius-lg); padding: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
 .vm-list--default { background: transparent; padding-inline: 0; }
-.vm-list__header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-1) var(--space-1) 0 var(--space-2); font: 600 15px/20px var(--font-sans); cursor: grab; }
+.vm-list__header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-1) var(--space-1) 0 var(--space-2); font: 600 15px/20px var(--font-sans); cursor: grab; }
 .vm-list__export { align-self: flex-end; }
+.vm-list__colours { flex-basis: 100%; display: flex; justify-content: flex-end; gap: var(--space-1); cursor: default; }
 @media (max-width: 768px) {
   .vm-board { flex-direction: column; align-items: stretch; }
   .vm-list { width: auto; }
@@ -107,6 +108,8 @@
 /* Colour circles */
 .vm-swatches { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .vm-swatch { box-sizing: border-box; width: 24px; height: 24px; padding: 0; border-radius: var(--radius-full); border: 1px solid var(--border-strong); background: var(--surface); cursor: pointer; }
+.vm-swatch--sm { width: 14px; height: 14px; }
+.vm-swatch--sm[aria-checked="true"] { box-shadow: 0 0 0 1px var(--surface), 0 0 0 3px var(--focus-ring); }
 .vm-swatch[data-colour="none"] { border-style: dashed; }
 .vm-swatch[aria-checked="true"] { box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--focus-ring); }
 .vm-swatch[data-colour="red"] { background: var(--task-red); }

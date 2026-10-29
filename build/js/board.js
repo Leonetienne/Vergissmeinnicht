@@ -193,7 +193,7 @@ Alpine.data("boardPage", (archive = false) => ({
     if (title && this.listTitleTaken(title)) return;
     this.creatingList = false;
     if (!title) return;
-    let list = { id: newTempId("list"), board_id: this.board.id, title, is_default: false,
+    let list = { id: newTempId("list"), board_id: this.board.id, title, colour: "none", is_default: false,
       position: this.board.lists.length, tasks: [] };
     this.perform(
       () => {
@@ -212,19 +212,21 @@ Alpine.data("boardPage", (archive = false) => ({
     );
   },
   renameList(list, title) {
-    if (this.listTitleTaken(title, list)) return;
-    const old = list.title;
+    if (!this.listTitleTaken(title, list)) this.updateList(list, { title }, "rename list");
+  },
+  updateList(list, fields, label) {
+    const old = Object.fromEntries(Object.keys(fields).map((k) => [k, list[k]]));
     this.perform(
-      () => (list.title = title),
-      () => op("list_update", { list_id: list.id, title }),
-      () => ["rename list", () => op("list_update", { list_id: rid("list", list.id), title: old }),
-        () => op("list_update", { list_id: rid("list", list.id), title })],
+      () => Object.assign(list, fields),
+      () => op("list_update", { list_id: list.id, ...fields }),
+      () => [label, () => op("list_update", { list_id: rid("list", list.id), ...old }),
+        () => op("list_update", { list_id: rid("list", list.id), ...fields })],
     );
   },
   async deleteList(list) {
     if (!(await window.confirmDialog("Delete this list? Its tasks move to the default list."))) return;
     const target = this.defaultList;
-    const snapshot = { id: list.id, title: list.title, position: list.position };
+    const snapshot = { id: list.id, title: list.title, colour: list.colour, position: list.position };
     this.perform(
       () => {
         let next = Math.max(-1, ...target.tasks.map((t) => t.position)) + 1;
@@ -244,7 +246,8 @@ Alpine.data("boardPage", (archive = false) => ({
         });
         return ["delete list", async () => {
           const previous = rid("list", snapshot.id);
-          const restored = await op("list_create", { board_id: this.board.id, title: snapshot.title, position: snapshot.position });
+          const { title, colour, position } = snapshot;
+          const restored = await op("list_create", { board_id: this.board.id, title, colour, position });
           remap("list", previous, restored.id);
           // Moved tasks were gapless 0..n-1 in the deleted list, so index equals former position.
           const moves = result.moved.map((t, index) => ({ task_id: rid("task", t.id), list_id: restored.id, position: index }));

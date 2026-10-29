@@ -23,6 +23,7 @@ def list_data(lst, tasks=None):
         "id": lst.id,
         "board_id": lst.board_id,
         "title": lst.title,
+        "colour": lst.colour,
         "is_default": lst.is_default,
         "position": lst.position,
     }

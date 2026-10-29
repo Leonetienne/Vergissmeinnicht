@@ -2,7 +2,7 @@ from boards import services as s
 from boards.models import Task
 from boards.serializers import list_data, task_data
 
-from ..registry import ID, POSITION, READ, WRITE, operation
+from ..registry import COLOUR, ID, POSITION, READ, WRITE, operation
 
 TITLE = {"type": "string", "description": "1 to 100 characters"}
 
@@ -17,16 +17,16 @@ def list_get(user, list_id):
 
 @operation("list_create", access=WRITE, method="POST", path="boards/{board_id}/lists/",
            description="Create a list at the end of the board, or at position (1 or more; 0 is the default list).",
-           params={"board_id": ID, "title": TITLE, "position": POSITION}, required=["board_id", "title"])
-def list_create(user, board_id, title, position=None):
-    return list_data(s.create_list(user, board_id, title, position), [])
+           params={"board_id": ID, "title": TITLE, "position": POSITION, "colour": COLOUR}, required=["board_id", "title"])
+def list_create(user, board_id, title, position=None, colour="none"):
+    return list_data(s.create_list(user, board_id, title, position, colour), [])
 
 
 @operation("list_update", access=WRITE, method="PATCH", path="lists/{list_id}/",
-           description="Rename a list. The default list cannot be renamed.",
-           params={"list_id": ID, "title": TITLE}, required=["list_id", "title"])
-def list_update(user, list_id, title):
-    return list_data(s.rename_list(user, list_id, title))
+           description="Change title or colour of a list. The default list cannot be changed.",
+           params={"list_id": ID, "title": TITLE, "colour": COLOUR}, required=["list_id"])
+def list_update(user, list_id, **args):
+    return list_data(s.update_list(user, list_id, **args))
 
 
 @operation("list_move", access=WRITE, method="POST", path="lists/{list_id}/move/",

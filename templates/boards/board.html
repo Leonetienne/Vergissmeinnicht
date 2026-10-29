@@ -51,9 +51,18 @@
 
   <div class="vm-board" x-ref="board">
     <template x-for="list in shownLists" :key="list.id">
-      <section class="vm-list" :class="list.is_default ? 'vm-list--default' : 'vm-list--custom'" :data-list-id="list.id">
+      <section class="vm-list" :class="list.is_default ? 'vm-list--default' : 'vm-list--custom'" :data-list-id="list.id"
+               :data-colour="list.colour !== 'none' ? list.colour : null">
         <template x-if="!list.is_default">
           <div class="vm-list__header">
+            <template x-if="editable">
+              <div class="vm-list__colours" role="radiogroup" aria-label="List colour">
+                <template x-for="c in colours" :key="c">
+                  <button type="button" class="vm-swatch vm-swatch--sm" :data-colour="c" role="radio" :aria-checked="String(list.colour === c)"
+                          :aria-label="c.charAt(0).toUpperCase() + c.slice(1)" @click="list.colour !== c && updateList(list, { colour: c }, 'change list colour')"></button>
+                </template>
+              </div>
+            </template>
             {% include "partials/_inline_edit.html" with get="() => list.title" set="v => renameList(list, v)" label="list title" editable="editable" %}
             <template x-if="editable">
               <button type="button" class="vm-icon-btn vm-icon-btn--danger" aria-label="Delete list" @click="deleteList(list)">

@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Any, Callable
 
+from boards.models import COLOURS
 from boards.services import ServiceError
 
 READ = "read"
@@ -55,6 +56,7 @@ def operation(name, *, access, method, path, description, params=None, required=
 # Shared parameter schemas
 ID = {"type": "integer", "minimum": 1}
 POSITION = {"type": "integer", "minimum": 0, "description": "0-based position among the siblings"}
+COLOUR = {"type": "string", "enum": COLOURS}
 DATE = {"type": ["string", "null"], "format": "date", "description": "YYYY-MM-DD or null"}
 
 

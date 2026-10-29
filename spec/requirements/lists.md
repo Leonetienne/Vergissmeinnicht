@@ -24,9 +24,9 @@ Covers:
 Tags: UI
 
 ### Default list protection
-`req~lists.default.protected~1`
+`req~lists.default.protected~2`
 
-If a request tries to rename, move or delete the default list, then the system shall reject it.
+If a request tries to rename, recolour, move or delete the default list, then the system shall reject it.
 
 Covers:
 - `feat~lists~1`
@@ -80,9 +80,19 @@ Covers:
 - `feat~lists~1`
 
 ### List header
-`req~lists.header~1`
+`req~lists.header~2`
 
-Every list except the default list shall have a header with its title, editable inline, and a small trash button.
+Every list except the default list shall have a header with its title, editable inline, and a small trash button; for editors and the owner the header shall show small colour circles at its top right.
+
+Covers:
+- `feat~lists~1`
+
+Tags: UI
+
+### List colour
+`req~lists.colour~1`
+
+Every list except the default list shall have a colour from the task colours (`req~tasks.colours~1`), none by default; when an editor or the owner picks a colour circle in the list header, the system shall store it at once and tint the list ground with it as subtle as a card tint.
 
 Covers:
 - `feat~lists~1`

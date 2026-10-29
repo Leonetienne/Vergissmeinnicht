@@ -2,11 +2,10 @@ from boards import services as s
 from boards.models import Task
 from boards.serializers import task_data
 
-from ..registry import DATE, ID, POSITION, READ, WRITE, operation
+from ..registry import COLOUR, DATE, ID, POSITION, READ, WRITE, operation
 
 TITLE = {"type": "string", "description": "1 to 200 characters"}
 STATE = {"type": "string", "enum": Task.STATES}
-COLOUR = {"type": "string", "enum": Task.COLOURS}
 NOTE = {"type": "string", "description": "Plain text, up to 5000 characters"}
 TASK_POSITION = {**POSITION, "description": "0-based position in the list's task sequence, all states included"}
 

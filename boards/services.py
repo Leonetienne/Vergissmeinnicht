@@ -5,7 +5,7 @@ from django.db.models.functions import Lower
 
 from accounts.models import unique_slug
 
-from .models import Board, List, Share, Task
+from .models import COLOURS, Board, List, Share, Task
 
 OWNER = "owner"
 EDITOR = Share.EDITOR
@@ -72,8 +72,8 @@ def clean_emoji(value):
 
 
 def clean_colour(value):
-    if value not in Task.COLOURS:
-        raise Invalid(f"Colour must be one of {', '.join(Task.COLOURS)}")
+    if value not in COLOURS:
+        raise Invalid(f"Colour must be one of {', '.join(COLOURS)}")
     return value
 
 
@@ -342,12 +342,12 @@ def remove_share(user, share_id):
 # Lists
 
 @transaction.atomic
-def create_list(user, board_id, title, position=None):
+def create_list(user, board_id, title, position=None, colour="none"):
     board = get_board(user, board_id, WRITE)
     title = clean_text(title, "List title", 100)
     siblings = list(board.lists.select_for_update().order_by("position", "id"))
     _require_unique_list_title(board, title)
-    lst = List.objects.create(board=board, title=title, position=len(siblings))
+    lst = List.objects.create(board=board, title=title, position=len(siblings), colour=clean_colour(colour or "none"))
     _place(siblings, lst, position, minimum=1)
     return lst
 
@@ -364,11 +364,14 @@ def _require_unique_list_title(board, title, exclude=None):
         raise Conflict(f"List {title} already exists on this board")
 
 
-def rename_list(user, list_id, title):
+def update_list(user, list_id, title=UNSET, colour=UNSET):
     lst = _custom_list(user, list_id)
-    lst.title = clean_text(title, "List title", 100)
-    _require_unique_list_title(lst.board, lst.title, exclude=lst.pk)
-    lst.save(update_fields=["title"])
+    if title is not UNSET:
+        lst.title = clean_text(title, "List title", 100)
+        _require_unique_list_title(lst.board, lst.title, exclude=lst.pk)
+    if colour is not UNSET:
+        lst.colour = clean_colour(colour)
+    lst.save(update_fields=["title", "colour"])
     return lst
 
 
