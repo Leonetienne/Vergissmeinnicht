@@ -104,6 +104,14 @@ When a member changes something on a board page, the system shall update the pag
 Covers:
 - `feat~ui~1`
 
+### Background refresh
+`req~ui.refresh~1`
+
+While the board overview, a board page or an archive page is visible, the system shall fetch its data from the server and update the page without a full reload when the browser tab becomes visible again and at least once a minute; while a text field or dialog is open, a drag is in progress, a change is being sent or a delayed display change such as a lingering tick is pending, the system shall postpone the reload.
+
+Covers:
+- `feat~ui~1`
+
 ### Responsive layout
 `req~ui.responsive~1`
 

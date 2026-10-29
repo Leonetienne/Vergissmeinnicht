@@ -3,15 +3,76 @@ import { queue } from "./api";
 import { failToast } from "./ui";
 import { record, setFailureHandler } from "./undo";
 
-// Shared behaviour of pages that change data: optimistic apply, serial sending, undo entries, reload on failure.
+const POLL_MS = 60_000;
+const CHECK_MS = 1_000;
+
+const timers = new Set();
+let dragging = false;
+let changes = 0;
+
+// setTimeout that holds back polling until it has fired.
+export function later(fn, ms) {
+  const id = setTimeout(() => {
+    timers.delete(id);
+    fn();
+  }, ms);
+  timers.add(id);
+  return id;
+}
+
+export function cancel(id) {
+  clearTimeout(id);
+  timers.delete(id);
+}
+
+function editing() {
+  const field = document.activeElement?.closest("input:not([type=checkbox]), textarea, select, [contenteditable]");
+  const overlay = [...document.querySelectorAll(".vm-overlay")].some((el) => el.checkVisibility());
+  return Boolean(field) || overlay;
+}
+
+/**
+ * Shared behaviour of pages that change data: optimistic apply, serial sending, undo entries, reload on failure, polling.
+ * The page provides fetchData() and applyData(data).
+ */
 export function page() {
   return {
     run: queue(),
     initPage() {
       setFailureHandler(() => this.reload());
+      let polledAt = Date.now();
+      const poll = () => {
+        if (document.hidden || Date.now() - polledAt < POLL_MS || !this.idle()) return;
+        polledAt = Date.now();
+        this.refresh();
+      };
+      document.addEventListener("visibilitychange", () => {
+        polledAt = 0;
+        poll();
+      });
+      setInterval(poll, CHECK_MS);
+    },
+    idle() {
+      return !this.run.busy() && !dragging && !timers.size && !editing();
+    },
+    async reload() {
+      try {
+        this.applyData(await this.fetchData());
+      } catch (error) {
+        failToast(error);
+      }
+    },
+    // Background reload: errors stay silent and data is dropped when the user acted meanwhile.
+    async refresh() {
+      const before = changes;
+      try {
+        const data = await this.fetchData();
+        if (changes === before && this.idle()) this.applyData(data);
+      } catch {}
     },
     // entry(result) returns [label, undo, redo]; both are async functions of operation calls.
     async perform(apply, send, entry) {
+      changes++;
       if (apply) apply();
       try {
         const result = await this.run(send);
@@ -27,6 +88,7 @@ export function page() {
       }
     },
     async replay(step) {
+      changes++;
       await this.run(step);
       await this.reload();
     },
@@ -65,13 +127,13 @@ const FLASH_MS = 500;
 function flashDropped(item, draggable) {
   const attr = item.getAttributeNames().find((name) => /^data-.+-id$/.test(name));
   if (!attr) return;
-  setTimeout(() => {
+  later(() => {
     const el = document.querySelector(`${draggable}[${attr}="${item.getAttribute(attr)}"]`);
     if (!el) return;
     el.classList.remove("vm-flash");
     void el.offsetWidth;
     el.classList.add("vm-flash");
-    setTimeout(() => el.classList.remove("vm-flash"), FLASH_MS);
+    later(() => el.classList.remove("vm-flash"), FLASH_MS);
   });
 }
 
@@ -96,12 +158,15 @@ export function makeSortable(el, { onDrop, onOutside, dropZone, ...options }) {
     filter: "input:not([type=checkbox]), textarea, select",
     preventOnFilter: false,
     onStart(event) {
+      dragging = true;
+      changes++;
       event.item._vmNext = event.item.nextSibling;
       first = last = null;
       document.addEventListener("pointermove", track);
       document.addEventListener("touchmove", track);
     },
     onEnd(event) {
+      dragging = false;
       document.removeEventListener("pointermove", track);
       document.removeEventListener("touchmove", track);
       // Alpine owns the DOM: put the element back and let the state change re-render it.

@@ -1,7 +1,7 @@
 import Alpine from "alpinejs";
 import { op } from "./api";
 import { makeSortable, mergeById, newTempId, page } from "./page";
-import { failToast, readJSON } from "./ui";
+import { readJSON } from "./ui";
 import { remap, rid } from "./undo";
 
 Alpine.data("boardList", () => {
@@ -21,14 +21,12 @@ Alpine.data("boardList", () => {
         },
       });
     },
-    async reload() {
-      try {
-        const fresh = await op("boards_list");
-        this.own = mergeById(this.own, fresh.own);
-        this.shared = mergeById(this.shared, fresh.shared);
-      } catch (error) {
-        failToast(error);
-      }
+    fetchData() {
+      return op("boards_list");
+    },
+    applyData(fresh) {
+      this.own = mergeById(this.own, fresh.own);
+      this.shared = mergeById(this.shared, fresh.shared);
     },
 
     titleTaken(title, except) {

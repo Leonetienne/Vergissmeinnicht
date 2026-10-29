@@ -45,9 +45,13 @@ export async function op(name, args = {}) {
 // Runs async steps one after another so the server sees changes in the order they were made.
 export function queue() {
   let chain = Promise.resolve();
-  return (step) => {
-    const run = chain.then(step);
-    chain = run.catch(() => {});
-    return run;
+  let pending = 0;
+  const run = (step) => {
+    pending++;
+    const result = chain.then(step).finally(() => pending--);
+    chain = result.catch(() => {});
+    return result;
   };
+  run.busy = () => pending > 0;
+  return run;
 }

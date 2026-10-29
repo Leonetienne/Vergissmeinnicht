@@ -394,3 +394,58 @@ def test_card_title_inline_edit_and_drag_from_any_surface(ui, owner):
     ui.d.refresh()
     time.sleep(PAUSE)
     assert ui.titles() == ["Renamed", "Third", "First"]
+
+
+def add_task_elsewhere(ui, title):
+    """Create a task through the REST API, past the page's own state, as another tab would."""
+    ui.d.execute_async_script("""
+        const [title, done] = arguments;
+        const [, template] = JSON.parse(document.getElementById("vm-api-routes").textContent).task_create;
+        const list = JSON.parse(document.getElementById("vm-page-data").textContent).lists.find((l) => l.is_default);
+        const csrf = document.cookie.match(/csrftoken=([^;]+)/)[1];
+        fetch(template.replace("{list_id}", list.id), {method: "POST", credentials: "same-origin",
+              headers: {"Content-Type": "application/json", "X-CSRFToken": csrf}, body: JSON.stringify({title})})
+            .then(done);
+    """, title)
+
+
+def show_tab(ui):
+    ui.d.execute_script("document.dispatchEvent(new Event('visibilitychange'))")
+
+
+def test_returning_to_tab_shows_changes_from_elsewhere(ui, owner):
+    ui.create_board("Refresh")
+    ui.add_task("Here")
+    ui.d.execute_script("document.activeElement.blur()")
+    add_task_elsewhere(ui, "Elsewhere")
+    time.sleep(PAUSE)
+    assert ui.titles() == ["Here"]
+    show_tab(ui)
+    time.sleep(PAUSE)
+    assert ui.titles() == ["Here", "Elsewhere"]
+
+
+def test_refresh_waits_for_lingering_tick(ui, owner):
+    ui.create_board("Refresh linger")
+    for title in ["One", "Two"]:
+        ui.add_task(title)
+    ui.d.execute_script("document.activeElement.blur()")
+    ui.css(".vm-check", ui.card("One")).click()
+    add_task_elsewhere(ui, "Three")
+    show_tab(ui)
+    time.sleep(0.3)
+    assert ui.titles() == ["One", "Two"]
+    time.sleep(LINGER + PAUSE * 2)
+    assert ui.titles() == ["Two", "Three", "One"]
+
+
+def test_refresh_waits_for_open_text_field(ui, owner):
+    ui.create_board("Refresh field")
+    ui.add_task("Here")
+    add_task_elsewhere(ui, "Elsewhere")
+    show_tab(ui)
+    time.sleep(PAUSE)
+    assert ui.titles() == ["Here"]
+    ui.d.execute_script("document.activeElement.blur()")
+    time.sleep(PAUSE * 2)
+    assert ui.titles() == ["Here", "Elsewhere"]

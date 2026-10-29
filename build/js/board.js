@@ -1,6 +1,6 @@
 import Alpine from "alpinejs";
 import { op } from "./api";
-import { byPosition, makeSortable, mergeById, newTempId, page } from "./page";
+import { byPosition, cancel, later, makeSortable, mergeById, newTempId, page } from "./page";
 import { dueClass, failToast, focusShown, formatDate, highlightAnchor, readJSON } from "./ui";
 import { remap, rid } from "./undo";
 
@@ -92,25 +92,22 @@ Alpine.data("boardPage", (archive = false) => ({
     return this.board.lists.find((l) => l.is_default);
   },
 
-  async reload() {
-    try {
-      const data = this.archive
-        ? await op("board_archive", { board_id: this.board.id })
-        : withoutArchived(await op("board_get", { board_id: this.board.id }));
-      const { lists, ...fields } = data;
-      Object.assign(this.board, fields);
-      this.board.lists = mergeById(this.board.lists, lists, (list, fresh) => {
-        const { tasks, ...rest } = fresh;
-        Object.assign(list, rest);
-        list.tasks = mergeById(list.tasks, tasks);
-      });
-      this.selected = this.selected.filter((id) => this.findTask(id));
-      if (this.single) {
-        this.single = this.findTask(this.single.id);
-        if (this.single) this.noteDraft = this.single.note;
-      }
-    } catch (error) {
-      failToast(error);
+  async fetchData() {
+    return this.archive
+      ? op("board_archive", { board_id: this.board.id })
+      : withoutArchived(await op("board_get", { board_id: this.board.id }));
+  },
+  applyData({ lists, ...fields }) {
+    Object.assign(this.board, fields);
+    this.board.lists = mergeById(this.board.lists, lists, (list, fresh) => {
+      const { tasks, ...rest } = fresh;
+      Object.assign(list, rest);
+      list.tasks = mergeById(list.tasks, tasks);
+    });
+    this.selected = this.selected.filter((id) => this.findTask(id));
+    if (this.single) {
+      this.single = this.findTask(this.single.id);
+      if (this.single) this.noteDraft = this.single.note;
     }
   },
 
@@ -326,8 +323,8 @@ Alpine.data("boardPage", (archive = false) => ({
   },
   linger(task, from) {
     task.lingerState ??= from;
-    clearTimeout(lingerTimers.get(task.id));
-    lingerTimers.set(task.id, setTimeout(() => {
+    cancel(lingerTimers.get(task.id));
+    lingerTimers.set(task.id, later(() => {
       lingerTimers.delete(task.id);
       delete task.lingerState;
     }, LINGER_MS));
